@@ -26,11 +26,12 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 | Component | Specification | Supplier | Price | Status |
 |-----------|--------------|----------|-------|--------|
 | **Raspberry Pi 4 Model B 4GB** | For NAS duties | [Multitronic.fi](https://www.multitronic.fi/fi/products/2379301) | €81.90 | ✅ Available |
-| **Samsung T7 Shield 1TB SSD** | USB 3.2, rugged | [Verkkokauppa.com](https://www.verkkokauppa.com/fi/product/1003900) | €148.99 | ⚠️ 2-4 weeks |
+| **MicroSD Card** | Kingston 32GB High Endurance (for OS) | [Verkkokauppa.com](https://www.verkkokauppa.com/fi/product/543269) | €20.99 | ✅ In Stock |
+| **Samsung T7 Shield 1TB SSD** | USB 3.2, connects via USB 3.0 port | [Verkkokauppa.com](https://www.verkkokauppa.com/fi/product/1003900) | €148.99 | ⚠️ 2-4 weeks |
 | **Official Power Supply** | USB-C, 15W | Verkkokauppa.com | €15-20 | ✅ Available |
 | **Case** | Standard Pi 4 case | Verkkokauppa.com | €8-12 | ✅ Available |
 
-**Subtotal NAS Unit: ~€255-280**
+**Subtotal NAS Unit: ~€275-300**
 
 ### Networking & Power
 
@@ -114,9 +115,9 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 | Category | Cost Range (EUR) |
 |----------|------------------|
 | Bird Camera Unit | €240-270 |
-| NAS Unit | €255-280 |
+| NAS Unit | €275-300 |
 | Networking & Power | €67-90 |
-| **Hardware Total** | **€562-640** |
+| **Hardware Total** | **€582-660** |
 | | |
 | **Recurring (Year 1):** | |
 | Electricity (6 kWh/month) | €14.40 |
@@ -156,10 +157,10 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 **Order 2 - Verkkokauppa.com (Week 1):**
 - 1× Camera Module 3 (€39.99)
-- 1× Kingston microSD 32GB (€20.99)
+- 2× Kingston microSD 32GB (€20.99 each) - one for camera Pi, one for NAS Pi
 - 1× Samsung T7 1TB (€148.99)
 - 1× PoE Injector (~€20)
-- Total: €229.97 → Free shipping
+- Total: €250.96 → Free shipping
 
 **Order 3 - Electrokit.com (Week 1):**
 - 1× PoE+ HAT (~€37)
