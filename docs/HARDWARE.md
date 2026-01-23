@@ -173,7 +173,7 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 - 1× Cable Glands set (~€12)
 - Total: ~€47 (consider adding RJ45 connectors or other Partco items to approach the ~€100 free-shipping threshold)
 
-**Order 4 - Taloon.com (Week 1):**
+**Order 6 - Taloon.com (Week 1):**
 - 1× Cat6 Outdoor Cable 50m (~€45)
 
 ### Delivery Timeline
