@@ -13,13 +13,13 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 |-----------|--------------|----------|----------|-------|--------|
 | **Raspberry Pi 4 Model B 8GB** | ARM Cortex-A72, 1.5GHz | [Farnell.fi](https://fi.farnell.com) | 3369503 | €90.92 | ✅ In Stock (5,790) |
 | **Camera Module 3** | 12MP, 1080p, autofocus | [Verkkokauppa.com](https://www.verkkokauppa.com/fi) | - | €39.99 | ✅ In Stock |
-| **PoE+ HAT** | 802.3at, 25W | [Verkkokauppa.com](https://www.verkkokauppa.com/fi) | - | €39.99 | ⚠️ 2-4 weeks |
-| **PIR Motion Sensor** | HC-SR501 or similar | AliExpress | - | €3-5 | ⏳ 2-4 weeks |
+| **PoE+ HAT** | 802.3at, 25W | [Electrokit.com](https://www.electrokit.com/en/raspberry-pi-poehat) | - | €35-40 | ✅ In Stock |
+| **PIR Motion Sensor** | HC-SR501 | [Vapaakauppa.net](https://www.vapaakauppa.net/saadettava-pir-liiketunnistin-hc-sr501.html) | - | €5-8 | ✅ Available |
 | **MicroSD Card** | Kingston 32GB High Endurance | [Verkkokauppa.com](https://www.verkkokauppa.com/fi/product/543269) | 543269 | €20.99 | ✅ In Stock |
-| **Weatherproof Enclosure** | IP67, ~15×10×8cm | Amazon.de | - | €25-30 | - |
-| **Cable Glands** | M16, IP67 rated | Amazon.de | - | €8-12 | - |
+| **Weatherproof Enclosure** | IP67, ~15×10×8cm | [Partco.fi](https://www.partco.fi) | - | €30-40 | ✅ Available |
+| **Cable Glands** | M16, IP67 rated | [Partco.fi](https://www.partco.fi) | - | €10-15 | ✅ Available |
 
-**Subtotal Camera Unit: ~€228-248**
+**Subtotal Camera Unit: ~€232-255**
 
 ### Home NAS/Processing Unit
 
@@ -36,11 +36,11 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 | Component | Specification | Supplier | Price | Notes |
 |-----------|--------------|----------|-------|-------|
-| **PoE Injector** | 802.3af/at, 48V | Amazon.de | €12-15 | - |
-| **Cat6 Outdoor Cable** | 50m, direct burial | Amazon.de | €35-40 | UV resistant |
-| **RJ45 Connectors** | Weatherproof IP67 | Amazon.de | €10-12 | For outdoor connection |
+| **PoE Injector** | 802.3af/at, 48V | [Verkkokauppa.com](https://www.verkkokauppa.com/fi) | €15-25 | - |
+| **Cat6 Outdoor Cable** | 50m, direct burial | [Taloon.com](https://www.taloon.com) | €40-50 | UV resistant |
+| **RJ45 Connectors** | Weatherproof IP67 | [Partco.fi](https://www.partco.fi) | €12-15 | For outdoor connection |
 
-**Subtotal Networking: ~€57-67**
+**Subtotal Networking: ~€67-90**
 
 ## Finnish Supplier Details
 
@@ -79,14 +79,44 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 - May have niche components
 - Contact for availability
 
+### 🇫🇮 Partco.fi (Helsinki)
+- **Electronics components specialist**
+- Good stock of sensors, enclosures, connectors
+- Free shipping on orders over €100
+- Location: Atomitie 5, Helsinki
+
+**Recommended for:** PIR sensors, enclosures, cable glands, connectors
+
+### 🇫🇮 Taloon.com
+- **Building supplies and cables**
+- Wide range of outdoor-rated cables
+- Nationwide delivery
+
+**Recommended for:** Cat6 outdoor cables, weatherproof supplies
+
+### 🇫🇮 Vapaakauppa.net
+- **Finnish electronics hobbyist shop**
+- Good prices on sensors and modules
+- Fast domestic shipping
+
+**Recommended for:** PIR sensors, Arduino/Raspberry Pi accessories
+
+### 🇩🇰 Electrokit.com (Sweden/Denmark)
+- **Nordic electronics specialist**
+- Good Raspberry Pi accessory stock including PoE HATs
+- Ships to Finland, reasonable shipping costs
+- Often better availability than Finnish retailers
+
+**Recommended for:** PoE HATs, Raspberry Pi accessories when out of stock locally
+
 ## Total Project Cost
 
 | Category | Cost Range (EUR) |
 |----------|------------------|
-| Bird Camera Unit | €228-248 |
+| Bird Camera Unit | €240-270 |
 | NAS Unit | €255-280 |
-| Networking & Power | €57-67 |
-| **Hardware Total** | **€540-595** |
+| Networking & Power | €67-90 |
+| **Hardware Total** | **€562-640** |
 | | |
 | **Recurring (Year 1):** | |
 | Electricity (6 kWh/month) | €14.40 |
@@ -113,7 +143,8 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 | Pi 4 8GB (Farnell) | Pi 4 8GB (Verkkokauppa) | Verkkokauppa | +€19 |
 | Pi 4 8GB | Pi 5 8GB | Data-Systems | +€24 (faster!) |
 | Camera Module 3 | Pi HQ Camera | Verkkokauppa | +€20 (better quality) |
-| PoE+ HAT | PoE splitter + USB-C | Various | -€15 (less elegant) |
+| PoE+ HAT (Verkkokauppa) | PoE+ HAT | Electrokit.com | -€5 (better availability) |
+| PIR Motion Sensor HC-SR501 (Vapaakauppa.net) | PIR Sensor (Partco) | Partco.fi | ≈same price (check current listing) |
 
 ## Purchasing Strategy
 
@@ -125,22 +156,31 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 **Order 2 - Verkkokauppa.com (Week 1):**
 - 1× Camera Module 3 (€39.99)
-- 1× PoE+ HAT (€39.99)
 - 1× Kingston microSD 32GB (€20.99)
 - 1× Samsung T7 1TB (€148.99)
-- Total: €249.96 → Free shipping
+- 1× PoE Injector (~€20)
+- Total: €229.97 → Free shipping
 
-**Order 3 - International (Week 2):**
-- PoE injector, Cat6 cable, enclosure from Amazon.de
-- PIR sensor from AliExpress (optional, start order early)
+**Order 3 - Electrokit.com (Week 1):**
+- 1× PoE+ HAT (~€37)
+- Ships from Nordic warehouse
+
+**Order 4 - Vapaakauppa.net (Week 1):**
+- 1× PIR Motion Sensor HC-SR501 (~€6)
+
+**Order 5 - Partco.fi (Week 1):**
+- 1× Weatherproof Enclosure (~€35)
+- 1× Cable Glands set (~€12)
+- Total: ~€47 (consider adding RJ45 connectors or other Partco items to approach the ~€100 free-shipping threshold)
+
+**Order 6 - Taloon.com (Week 1):**
+- 1× Cat6 Outdoor Cable 50m (~€45)
 
 ### Delivery Timeline
 
-- **Week 1**: Order from Farnell + Verkkokauppa
-- **Week 2**: Receive in-stock items (Pi 4, Camera, microSD)
-- **Week 3-4**: Receive backorder items (PoE HAT, SSD)
-- **Week 2-3**: International items arrive
-- **Week 5-6**: AliExpress PIR sensors
+- **Week 1**: Order from all Finnish suppliers
+- **Week 2**: Receive in-stock items (Pi 4, Camera, microSD, sensors, cables)
+- **Week 3-4**: Receive backorder items (SSD)
 
 **Can start development** with Pi 4 + Camera + microSD while waiting for PoE components.
 
