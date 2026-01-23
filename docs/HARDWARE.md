@@ -180,7 +180,7 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 - **Week 1**: Order from all Finnish suppliers
 - **Week 2**: Receive in-stock items (Pi 4, Camera, microSD, sensors, cables)
-- **Week 3-4**: Receive backorder items (PoE HAT, SSD)
+- **Week 3-4**: Receive backorder items (SSD)
 
 **Can start development** with Pi 4 + Camera + microSD while waiting for PoE components.
 
