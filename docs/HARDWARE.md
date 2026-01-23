@@ -144,7 +144,7 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 | Pi 4 8GB | Pi 5 8GB | Data-Systems | +€24 (faster!) |
 | Camera Module 3 | Pi HQ Camera | Verkkokauppa | +€20 (better quality) |
 | PoE+ HAT (Verkkokauppa) | PoE+ HAT | Electrokit.com | -€5 (better availability) |
-| PIR Sensor (Partco) | HC-SR501 | Vapaakauppa.net | -€3-5 (cheaper) |
+| PIR Motion Sensor HC-SR501 (Vapaakauppa.net) | PIR Sensor (Partco) | Partco.fi | ≈same price (check current listing) |
 
 ## Purchasing Strategy
 
