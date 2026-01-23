@@ -19,7 +19,7 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 | **Weatherproof Enclosure** | IP67, ~15×10×8cm | [Partco.fi](https://www.partco.fi) | - | €30-40 | ✅ Available |
 | **Cable Glands** | M16, IP67 rated | [Partco.fi](https://www.partco.fi) | - | €10-15 | ✅ Available |
 
-**Subtotal Camera Unit: ~€240-270**
+**Subtotal Camera Unit: ~€232-255**
 
 ### Home NAS/Processing Unit
 
