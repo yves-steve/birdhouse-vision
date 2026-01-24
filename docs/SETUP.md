@@ -165,8 +165,11 @@ choco install rpi-imager
    # Try .local hostname (Bonjour/mDNS)
    ping birdhouse-camera.local
    
-   # Or scan your network
+   # Or scan your network (requires nmap: brew install nmap)
    sudo nmap -sn 192.168.1.0/24 | grep -i raspberry
+   
+   # Or use arp (built-in, less reliable)
+   arp -a | grep -i b8:27:eb
    ```
    
    **Windows:**
