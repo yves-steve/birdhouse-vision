@@ -168,7 +168,7 @@ choco install rpi-imager
    # Or scan your network (requires nmap: brew install nmap)
    sudo nmap -sn 192.168.1.0/24 | grep -i raspberry
    
-   # Or use arp (built-in, less reliable)
+   # Or use arp (built-in, may not show devices that haven't communicated recently)
    # Look for Raspberry Pi MAC addresses (b8:27:eb, dc:a6:32, e4:5f:01)
    arp -a | grep -iE "(b8:27:eb|dc:a6:32|e4:5f:01)"
    ```
