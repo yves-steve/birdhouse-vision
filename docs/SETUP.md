@@ -2,6 +2,107 @@
 
 Complete step-by-step guide to set up your birdhouse camera system from scratch.
 
+## System Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         BIRDHOUSE VISION SYSTEM                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+    🏡 OUTDOOR (Birdhouse)              🏠 HOME (Indoor)            ☁️  CLOUD
+    ┌──────────────────┐                ┌──────────────┐          ┌──────────┐
+    │  Camera Pi       │   Cat6 Cable   │   NAS Pi     │  WiFi    │   AWS    │
+    │  (Pi 4 8GB)      │◄──────────────►│  (Pi 4 4GB)  │◄────────►│Rekognition│
+    │                  │   PoE Power    │              │          │          │
+    │  - Camera Module │                │  - 1TB SSD   │          └──────────┘
+    │  - PIR Sensor    │                │  - Storage   │
+    │  - PoE+ HAT      │                │  - Processing│
+    │  - Weatherproof  │                └──────────────┘
+    └──────────────────┘
+         │
+         │ Motion Detected
+         ▼
+    🐦 Bird Activity
+       Captured & Stored
+```
+
+### Data Flow
+
+```
+1. PIR Sensor → Detects Motion
+         ↓
+2. Camera Module → Captures Image (1080p)
+         ↓
+3. Camera Pi → Saves Locally (microSD)
+         ↓
+4. Network Transfer → Sends to NAS Pi (via PoE Ethernet)
+         ↓
+5. NAS Pi → Stores on 1TB SSD
+         ↓
+6. AWS Rekognition → Identifies Bird Species
+         ↓
+7. Results → Stored & Available for Review
+```
+
+### Hardware Connections - Camera Pi
+
+```
+                    ┌─────────────────────────────┐
+                    │   Raspberry Pi 4 (8GB)      │
+                    │                             │
+    Camera ─────────┤ CSI Port                    │
+    Module 3        │                             │
+                    │                 GPIO Pins   │──── PIR Motion
+                    │                             │     Sensor (3 pins)
+                    │                             │
+                    │                 Ethernet    │──── Cat6 Cable
+    PoE+ HAT ───────┤ 40-pin Header   Port (PoE)  │     (Data + Power)
+    (sits on top)   │                             │
+                    │                             │
+                    │ microSD Slot                │──── 32GB microSD
+                    └─────────────────────────────┘
+                             (All enclosed in weatherproof enclosure)
+```
+
+### Hardware Connections - NAS Pi
+
+```
+                    ┌─────────────────────────────┐
+                    │   Raspberry Pi 4 (4GB)      │
+                    │                             │
+                    │                             │
+    USB-C ──────────┤ USB-C Port    USB 3.0 Ports │──── Samsung T7
+    Power (15W)     │                             │     1TB SSD
+                    │                             │
+                    │                 Ethernet    │──── Home Network
+                    │                 Port        │     (Router)
+                    │                             │
+                    │                             │
+                    │ microSD Slot                │──── 32GB microSD
+                    └─────────────────────────────┘
+                             (Standard case, indoor placement)
+```
+
+### Network Topology
+
+```
+                        Home Router/Switch
+                        (192.168.1.1)
+                               │
+                ┌──────────────┼──────────────┐
+                │              │              │
+                │              │              │
+        PoE Injector    NAS Pi (WiFi)   MacBook Pro
+        (Ethernet)      192.168.1.100   (WiFi/Setup)
+                │
+                │ Cat6 (50m)
+                │ PoE Power
+                │
+         Camera Pi (PoE)
+         192.168.1.101
+         (birdhouse-camera.local)
+```
+
 ## Table of Contents
 1. [Hardware Prerequisites](#hardware-prerequisites)
 2. [Flashing Raspberry Pi OS](#flashing-raspberry-pi-os)
