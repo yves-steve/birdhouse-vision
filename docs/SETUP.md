@@ -297,11 +297,14 @@ list disk
 ### Camera Not Detected
 
 ```bash
-# Test camera connection
+# Primary test on modern Raspberry Pi OS (libcamera stack)
+libcamera-hello
+
+# A preview window should appear if the camera is working.
+
+# Optional: legacy stack diagnostic (only meaningful if legacy camera stack is enabled)
 vcgencmd get_camera
-
-# Should show: supported=1 detected=1
-
+# On legacy stack, this should show: supported=1 detected=1
 # If not, check ribbon cable connection
 # Ensure blue side faces USB ports
 ```
