@@ -21,6 +21,28 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 **Subtotal Camera Unit: ~€232-255**
 
+## Development Tools
+
+### SD Card Reader (for MacBook Pro)
+
+#### Option 1: For MacBook Pro with Built-in SD Slot (2021+ M1/M2/M3 models)
+
+| Component | Specification | Supplier | Price | Status |
+|-----------|--------------|----------|-------|--------|
+| **microSD to SD Adapter** | Usually included with microSD cards | - | Free (included) | ✅ - |
+
+**Note:** MacBook Pro 14" and 16" (2021 and newer) have built-in SD card slots. The Kingston High Endurance microSD cards listed above typically include a microSD to SD adapter in the package. Simply insert the microSD card into the adapter, then insert into your MacBook's built-in SD slot.
+
+#### Option 2: For MacBook Pro without SD Slot (2016-2020 USB-C only models)
+
+| Component | Specification | Supplier | Price | Status |
+|-----------|--------------|----------|-------|--------|
+| **Anker USB-C SD Card Reader** | USB 3.0, UHS-I, USB-C connector | [Verkkokauppa.com](https://www.verkkokauppa.com) | €15-25 | ✅ Available |
+| **Kingston USB-C microSD Reader** | USB 3.2, UHS-II support | [Verkkokauppa.com](https://www.verkkokauppa.com) | €12-18 | ✅ Available |
+| **SanDisk microSD Reader** | USB-C, compact design | [Power.fi](https://www.power.fi) | €10-15 | ✅ Available |
+
+**Note:** For flashing Raspberry Pi OS images to microSD cards from MacBook Pro (USB-C only). Choose a reader with UHS-I or UHS-II support for faster write speeds. All are plug-and-play with macOS.
+
 ### Home NAS/Processing Unit
 
 | Component | Specification | Supplier | Price | Status |
