@@ -19,7 +19,7 @@ Birdhouse Vision is an AI-powered bird camera system that uses:
 ## Code Style and Conventions
 - Follow PEP 8 style guide for Python code
 - Use type hints for function parameters and return values
-- Use docstrings for all functions, classes, and modules (Google-style format)
+- Use simple, descriptive docstrings for all functions, classes, and modules
 - Keep functions focused and modular
 - Use descriptive variable names that reflect the bird camera domain
 
