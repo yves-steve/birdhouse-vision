@@ -165,8 +165,13 @@ choco install rpi-imager
    # Try .local hostname (Bonjour/mDNS)
    ping birdhouse-camera.local
    
-   # Or scan your network
+   # Or scan your network (requires nmap: brew install nmap)
    sudo nmap -sn 192.168.1.0/24 | grep -i raspberry
+   
+   # Or use arp (built-in, may not show devices that haven't communicated recently)
+   # Look for Raspberry Pi MAC addresses:
+   # b8:27:eb (older models), dc:a6:32, e4:5f:01 (newer models)
+   arp -a | grep -iE "(b8:27:eb|dc:a6:32|e4:5f:01)"
    ```
    
    **Windows:**
