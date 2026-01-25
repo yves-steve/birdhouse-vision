@@ -228,15 +228,32 @@ choco install rpi-imager
        - Paste your **public key** (e.g., contents of `~/.ssh/id_rsa.pub` or `~/.ssh/id_ed25519.pub`)
        - **Don't have SSH keys?** Generate them first:
          
+         **Understanding SSH Key Algorithms:**
+         - **ECDSA** (Elliptic Curve Digital Signature Algorithm) - Recommended for strong security with smaller key sizes
+         - **Ed25519** - Default algorithm, very secure and fast (modern choice)
+         - **RSA** (Rivest–Shamir–Adleman) - Widely compatible, requires 4096-bit keys for strong security
+         - **DSA** (Digital Signature Algorithm) - Legacy, not recommended for new keys
+         
+         If you don't specify an algorithm, Ed25519 is used by default. For maximum security, use ECDSA with a strong curve.
+         
          **macOS/Linux:**
          ```bash
-         # Generate ED25519 key (recommended, more secure and faster)
+         # Generate ECDSA key (recommended - strong security with 521-bit curve)
+         ssh-keygen -t ecdsa -b 521 -C "your_email@example.com"
+         
+         # Or Ed25519 key (also excellent, modern default)
          ssh-keygen -t ed25519 -C "your_email@example.com"
          
-         # Or RSA key (compatible with older systems)
+         # Or RSA key (maximum compatibility, use 4096-bit)
          ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
          
+         # IMPORTANT: When prompted for a passphrase, CREATE ONE!
+         # A passphrase acts as a second factor authentication.
+         # Even if your private key is stolen, it's useless without the passphrase.
+         
          # View your public key to copy
+         cat ~/.ssh/id_ecdsa.pub
+         # or
          cat ~/.ssh/id_ed25519.pub
          # or
          cat ~/.ssh/id_rsa.pub
@@ -244,13 +261,33 @@ choco install rpi-imager
          
          **Windows (PowerShell):**
          ```powershell
-         # Generate ED25519 key
+         # Generate ECDSA key (recommended - strong security)
+         ssh-keygen -t ecdsa -b 521 -C "your_email@example.com"
+         
+         # Or Ed25519 key (also excellent)
          ssh-keygen -t ed25519 -C "your_email@example.com"
          
+         # IMPORTANT: When prompted for a passphrase, CREATE ONE!
+         # This adds a second layer of security to your private key.
+         
          # View your public key to copy
+         Get-Content $env:USERPROFILE\.ssh\id_ecdsa.pub
+         # or
          Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
          ```
+         
+         **🔒 CRITICAL SECURITY PRACTICES:**
+         - **Store your private key and passphrase in a password manager** (e.g., 1Password, Bitwarden)
+         - **NEVER share your private key** with anyone - only share the PUBLIC key (`.pub` file)
+         - **If compromised**: A stolen private key can be used to access ANY resource it's authorized for
+         - **Treat it like a master password**: Your private key grants access to all servers and services that trust it
+         - If you suspect your private key is compromised, immediately:
+           1. Generate a new key pair
+           2. Replace the old public key on all servers with the new one
+           3. Delete the compromised private key
+       
        - **Why public key auth?** More secure than passwords - uses cryptographic key pairs that are virtually impossible to brute-force
+       - **Why use a passphrase?** Acts as a second factor - even if someone steals your private key file, they cannot use it without your passphrase
      - ⚠️ **Alternative**: Use password authentication (less secure, but simpler for testing)
    - Click **Save**
 
