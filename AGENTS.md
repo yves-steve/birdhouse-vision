@@ -884,7 +884,8 @@ from typing import Optional
 class BirdhouseDaemon:
     """Resilient daemon with error isolation."""
     
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self.running = True
         self.camera = None
         self.uploader = None
@@ -905,7 +906,7 @@ class BirdhouseDaemon:
             return False
         
         try:
-            self.uploader = S3Uploader('birdhouse-captures')
+            self.uploader = S3Uploader(self.config.AWS_S3_BUCKET)
             logging.info("S3 uploader initialized")
         except Exception as e:
             logging.warning(f"S3 init failed, will queue locally: {e}")
