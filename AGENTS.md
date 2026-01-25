@@ -432,7 +432,7 @@ class S3Uploader:
                     s3_key,
                     ExtraArgs={'ContentType': 'image/jpeg'}
                 )
-                logging.info(f"Uploaded {local_path.name} to s3://{self.bucket_name}/{s3_key}")
+                logging.info(f"Uploaded {local_path.name} to S3: {s3_key}")
                 return True
                 
             except ClientError as e:
