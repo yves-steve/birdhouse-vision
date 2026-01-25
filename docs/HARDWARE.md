@@ -29,9 +29,9 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 | Component | Specification | Supplier | Price | Status |
 |-----------|--------------|----------|-------|--------|
-| **microSD to SD Adapter** | Usually included with microSD cards | - | Free (included) | ✅ - |
+| **microSD to SD Adapter** | Included with Kingston microSD cards | - | Free (included) | ✅ - |
 
-**Note:** MacBook Pro 14" and 16" (2021 and newer) have built-in SD card slots. The Kingston High Endurance microSD cards listed above typically include a microSD to SD adapter in the package. Simply insert the microSD card into the adapter, then insert into your MacBook's built-in SD slot.
+**Note:** MacBook Pro 14" and 16" (2021 and newer) have built-in SD card slots. The Kingston High Endurance microSD cards listed above include a microSD to SD adapter in the package. Simply insert the microSD card into the adapter, then insert into your MacBook's built-in SD slot.
 
 #### Option 2: For MacBook Pro without SD Slot (2016-2020 USB-C only models)
 
@@ -43,6 +43,14 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 **Note:** For flashing Raspberry Pi OS images to microSD cards from MacBook Pro (USB-C only). Choose a reader with UHS-I or UHS-II support for faster write speeds. All are plug-and-play with macOS.
 
+#### HDMI Cable for Initial Setup
+
+| Component | Specification | Supplier | Price | Status |
+|-----------|--------------|----------|-------|--------|
+| **Mini HDMI to HDMI Cable** | 1-2m, for Pi 4 HDMI output | [Verkkokauppa.com](https://www.verkkokauppa.com) | €8-12 | ✅ Available |
+
+**Note:** Raspberry Pi 4 uses mini HDMI ports (not full-size HDMI). Required for initial OS setup and troubleshooting. Can be shared between camera Pi and NAS Pi.
+
 ### Home NAS/Processing Unit
 
 | Component | Specification | Supplier | Price | Status |
@@ -52,8 +60,11 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 | **Samsung T7 Shield 1TB SSD** | USB 3.2, connects via USB 3.0 port | [Verkkokauppa.com](https://www.verkkokauppa.com/fi/product/1003900) | €148.99 | ⚠️ 2-4 weeks |
 | **Official Power Supply** | USB-C, 15W | Verkkokauppa.com | €15-20 | ✅ Available |
 | **Case** | Standard Pi 4 case | Verkkokauppa.com | €8-12 | ✅ Available |
+| **Cat6 Network Cable** | 1m patch cable | [Verkkokauppa.com](https://www.verkkokauppa.com) | €3-5 | ✅ Available |
 
-**Subtotal NAS Unit: ~€275-300**
+**Subtotal NAS Unit: ~€278-305**
+
+**Note:** The NAS Pi connects to home router via short Cat6 cable (1m). The outdoor camera Pi uses the 50m Cat6 cable listed in Networking & Power section.
 
 ### Networking & Power
 
@@ -137,9 +148,10 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 | Category | Cost Range (EUR) |
 |----------|------------------|
 | Bird Camera Unit | €240-270 |
-| NAS Unit | €275-300 |
+| NAS Unit | €278-305 |
 | Networking & Power | €67-90 |
-| **Hardware Total** | **€582-660** |
+| Development Tools | €8-12 |
+| **Hardware Total** | **€593-677** |
 | | |
 | **Recurring (Year 1):** | |
 | Electricity (6 kWh/month) | €14.40 |
@@ -182,7 +194,9 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 - 2× Kingston microSD 32GB (€20.99 each) - one for camera Pi, one for NAS Pi
 - 1× Samsung T7 1TB (€148.99)
 - 1× PoE Injector (~€20)
-- Total: €250.96 → Free shipping
+- 1× Mini HDMI to HDMI Cable (~€10)
+- 1× Cat6 1m patch cable (~€4)
+- Total: €264.95 → Free shipping
 
 **Order 3 - Electrokit.com (Week 1):**
 - 1× PoE+ HAT (~€37)
