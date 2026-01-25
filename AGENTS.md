@@ -308,6 +308,7 @@ import os
 import shutil
 from pathlib import Path
 from collections import deque
+from typing import Optional
 import logging
 
 class ImageQueue:
@@ -351,7 +352,7 @@ class ImageQueue:
             except Exception as e:
                 logging.error(f"Failed to delete {old_image}: {e}")
     
-    def get_next_upload(self) -> Path:
+    def get_next_upload(self) -> Optional[Path]:
         """Get next image to upload (FIFO)."""
         return self.upload_queue.popleft() if self.upload_queue else None
 ```
