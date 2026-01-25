@@ -92,8 +92,8 @@ __pycache__/
 ❌ **WRONG** - Exposing real identifiers:
 ```yaml
 # config.yaml (committed to repo)
-aws_s3_bucket: "birdhouse-prod-images-123456789012"
-aws_account_id: "123456789012"
+aws_s3_bucket: "birdhouse-prod-images-<aws-account-id>"
+aws_account_id: "<aws-account-id>"
 ```
 
 ✅ **CORRECT** - Use placeholders and examples:
