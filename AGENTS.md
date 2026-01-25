@@ -669,7 +669,10 @@ def lambda_handler(event, context):
     # Filter for bird-related labels
     bird_labels = [
         label for label in response['Labels']
-        if 'Bird' in label['Name'] or 'Animal' in label.get('Parents', [])
+        if (
+            'Bird' in label['Name']
+            or any(parent.get('Name') == 'Animal' for parent in label.get('Parents', []))
+        )
     ]
     
     # Store results in DynamoDB or back to S3
