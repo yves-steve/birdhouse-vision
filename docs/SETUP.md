@@ -224,7 +224,34 @@ choco install rpi-imager
      - ✅ Set locale: `Europe/Helsinki`, keyboard layout: `us`
    - **Services Tab**:
      - ✅ Enable SSH
-     - ✅ Use password authentication (for now)
+     - ✅ Use public-key authentication (recommended for security)
+       - Paste your **public key** (e.g., contents of `~/.ssh/id_rsa.pub` or `~/.ssh/id_ed25519.pub`)
+       - **Don't have SSH keys?** Generate them first:
+         
+         **macOS/Linux:**
+         ```bash
+         # Generate ED25519 key (recommended, more secure and faster)
+         ssh-keygen -t ed25519 -C "your_email@example.com"
+         
+         # Or RSA key (compatible with older systems)
+         ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+         
+         # View your public key to copy
+         cat ~/.ssh/id_ed25519.pub
+         # or
+         cat ~/.ssh/id_rsa.pub
+         ```
+         
+         **Windows (PowerShell):**
+         ```powershell
+         # Generate ED25519 key
+         ssh-keygen -t ed25519 -C "your_email@example.com"
+         
+         # View your public key to copy
+         Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
+         ```
+       - **Why public key auth?** More secure than passwords - uses cryptographic key pairs that are virtually impossible to brute-force
+     - ⚠️ **Alternative**: Use password authentication (less secure, but simpler for testing)
    - Click **Save**
 
 6. **Write**:
@@ -292,12 +319,14 @@ choco install rpi-imager
    **macOS/Windows (PowerShell or Windows Terminal):**
    ```bash
    ssh birdhouse@birdhouse-camera.local
-   # Enter the password you set during OS customization
+   # If using public key auth: automatically connects (no password prompt)
+   # If using password auth: enter the password you set during OS customization
    ```
    
    **Windows (if SSH not available):**
    - Install OpenSSH: Settings → Apps → Optional Features → Add OpenSSH Client
    - Or use PuTTY: Download from https://putty.org/
+     - For PuTTY with key auth: Convert private key to .ppk format using PuTTYgen
 
 #### First Login Tasks (Camera Pi)
 
