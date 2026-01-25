@@ -505,9 +505,8 @@ config.validate()
 
 **Example `.env.example`** (safe to commit):
 ```bash
-# AWS Credentials - Replace with your actual values
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
-AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+# AWS configuration (credentials must NOT be stored in this file)
+# Set AWS credentials via standard AWS mechanisms (environment, IAM role, or secrets manager).
 AWS_REGION=eu-north-1
 AWS_S3_BUCKET=your-bucket-name-here
 
