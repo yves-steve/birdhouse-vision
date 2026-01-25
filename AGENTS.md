@@ -321,7 +321,7 @@ class ImageQueue:
     
     def add_image(self, image_path: Path) -> bool:
         """Add image to queue, enforce disk limits."""
-        # Check disk space BEFORE capture
+        # Enforce disk space limits for this image (file may already exist)
         if not self._has_space(image_path):
             logging.warning("Disk space low, cleaning old images")
             self._cleanup_old_images()
