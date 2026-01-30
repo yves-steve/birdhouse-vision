@@ -113,7 +113,7 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 **Recommended for:** Cameras, HATs, accessories, portable SSDs
 
-### 🇵🇮 Jimms.fi
+### 🇫🇮 Jimms.fi
 - **Popular Finnish PC and electronics retailer**
 - Free shipping on orders over €100
 - Wide selection of PC components, storage drives, and adapters
