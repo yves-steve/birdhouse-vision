@@ -78,7 +78,7 @@ Complete hardware list with Finnish supplier links and current prices (January 2
 
 **Subtotal NAS Unit:**
 - With 500GB portable SSD: ~€208-230
-- With 1TB portable SSD: ~€278-305
+- With 1TB portable SSD: ~€278-289
 - With Kingston A400 960GB + adapter: ~€195-215
 
 **Note:** The NAS Pi connects to home router via short Cat6 cable (1m). The outdoor camera Pi uses the 50m Cat6 cable listed in Networking & Power section.
