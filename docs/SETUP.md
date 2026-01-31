@@ -224,71 +224,69 @@ choco install rpi-imager
      - ✅ Set locale: `Europe/Helsinki`, keyboard layout: `us`
    - **Services Tab**:
      - ✅ Enable SSH
-     - ✅ Use public-key authentication (recommended for security)
-       - Paste your **public key** (e.g., contents of `~/.ssh/id_rsa.pub` or `~/.ssh/id_ed25519.pub`)
-       - **Don't have SSH keys?** Generate them first:
-         
-         **Understanding SSH Key Algorithms:**
-         - **ECDSA** (Elliptic Curve Digital Signature Algorithm) - Recommended for strong security with smaller key sizes
-         - **Ed25519** - Default algorithm, very secure and fast (modern choice)
-         - **RSA** (Rivest–Shamir–Adleman) - Widely compatible, requires 4096-bit keys for strong security
-         - **DSA** (Digital Signature Algorithm) - Legacy, not recommended for new keys
-         
-         If you don't specify an algorithm, Ed25519 is used by default. For maximum security, use ECDSA with a strong curve.
-         
-         **macOS/Linux:**
-         ```bash
-         # Generate ECDSA key (recommended - strong security with 521-bit curve)
-         ssh-keygen -t ecdsa -b 521 -C "your_email@example.com"
-         
-         # Or Ed25519 key (also excellent, modern default)
-         ssh-keygen -t ed25519 -C "your_email@example.com"
-         
-         # Or RSA key (maximum compatibility, use 4096-bit)
-         ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-         
-         # IMPORTANT: When prompted for a passphrase, CREATE ONE!
-         # A passphrase acts as a second factor authentication.
-         # Even if your private key is stolen, it's useless without the passphrase.
-         
-         # View your public key to copy
-         cat ~/.ssh/id_ecdsa.pub
-         # or
-         cat ~/.ssh/id_ed25519.pub
-         # or
-         cat ~/.ssh/id_rsa.pub
-         ```
-         
-         **Windows (PowerShell):**
-         ```powershell
-         # Generate ECDSA key (recommended - strong security)
-         ssh-keygen -t ecdsa -b 521 -C "your_email@example.com"
-         
-         # Or Ed25519 key (also excellent)
-         ssh-keygen -t ed25519 -C "your_email@example.com"
-         
-         # IMPORTANT: When prompted for a passphrase, CREATE ONE!
-         # This adds a second layer of security to your private key.
-         
-         # View your public key to copy
-         Get-Content $env:USERPROFILE\.ssh\id_ecdsa.pub
-         # or
-         Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
-         ```
-         
-         **🔒 CRITICAL SECURITY PRACTICES:**
-         - **Store your private key and passphrase in a password manager** (e.g., 1Password, Bitwarden)
-         - **NEVER share your private key** with anyone - only share the PUBLIC key (`.pub` file)
-         - **If compromised**: A stolen private key can be used to access ANY resource it's authorized for
-         - **Treat it like a master password**: Your private key grants access to all servers and services that trust it
-         - If you suspect your private key is compromised, immediately:
-           1. Generate a new key pair
-           2. Replace the old public key on all servers with the new one
-           3. Delete the compromised private key
+     - ✅ Select **"Allow public-key authentication only"** (recommended)
        
-       - **Why public key auth?** More secure than passwords - uses cryptographic key pairs that are virtually impossible to brute-force
-       - **Why use a passphrase?** Acts as a second factor - even if someone steals your private key file, they cannot use it without your passphrase
-     - ⚠️ **Alternative**: Use password authentication (less secure, but simpler for testing)
+       When you select public-key authentication, Raspberry Pi Imager will generate a new SSH key pair for you. You'll be prompted to save the key — **save it directly to your password manager** (e.g., Bitwarden) rather than storing it locally on your machine.
+       
+       **Using Bitwarden for SSH Key Management (Recommended):**
+       
+       This approach keeps your private keys secure in your password vault, with no keys stored on your local filesystem.
+       
+       1. **In Raspberry Pi Imager**: Select "Allow public-key authentication only"
+       2. **When prompted to save the key**: 
+          - Bitwarden will offer to save the SSH key
+          - Choose **"SSH Key"** as the item type in Bitwarden
+          - Save both the private key and public key
+          - Add a descriptive name (e.g., "Birdhouse NAS Pi SSH Key")
+       3. **Copy the public key**: Paste it into the Raspberry Pi Imager's public key field
+       4. **Enable Bitwarden SSH Agent**:
+          - Open Bitwarden desktop app
+          - Go to **Settings → SSH Agent**
+          - Enable **"Enable SSH Agent"**
+          - On Windows: Also enable **"Use OpenSSH agent"** for system integration
+       
+       **How it works when connecting:**
+       ```
+       You run: ssh username@birdhouse-nas.local
+                    ↓
+       Bitwarden prompts: "Allow SSH connection using [key name]?"
+                    ↓
+       You approve → Bitwarden provides the key → Connection established
+       ```
+       
+       **🔒 Benefits of this approach:**
+       - **No local key files** — Private keys stay encrypted in your Bitwarden vault
+       - **Cross-device access** — Connect from any device where Bitwarden is installed
+       - **Approval prompts** — You explicitly authorize each connection
+       - **Automatic key rotation** — Easy to manage and revoke keys from Bitwarden
+       
+       **Alternative: Generate keys manually (if not using a password manager)**
+       
+       If you prefer to manage keys locally:
+       
+       **Windows (PowerShell):**
+       ```powershell
+       # Generate Ed25519 key (recommended - secure and fast)
+       ssh-keygen -t ed25519 -C "your_email@example.com"
+       
+       # When prompted for passphrase, CREATE ONE for extra security
+       
+       # View your public key to copy into Raspberry Pi Imager
+       Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
+       ```
+       
+       **macOS/Linux:**
+       ```bash
+       # Generate Ed25519 key
+       ssh-keygen -t ed25519 -C "your_email@example.com"
+       
+       # View your public key
+       cat ~/.ssh/id_ed25519.pub
+       ```
+       
+       If generating keys locally, store your private key and passphrase in a password manager as backup.
+       
+     - ⚠️ **Alternative**: Use password authentication (less secure, simpler for testing)
    - Click **Save**
 
 6. **Write**:
@@ -355,12 +353,25 @@ choco install rpi-imager
    
    **macOS/Windows (PowerShell or Windows Terminal):**
    ```bash
-   ssh birdhouse@birdhouse-camera.local
-   # If using public key auth: automatically connects (no password prompt)
-   # If using password auth: enter the password you set during OS customization
+   ssh username@birdhouse-camera.local
    ```
    
-   **Windows (if SSH not available):**
+   **If using Bitwarden SSH Agent:**
+   - Ensure Bitwarden desktop app is **open and unlocked**
+   - When you run the SSH command, Bitwarden will prompt: "Allow SSH connection?"
+   - Approve the connection → you're in!
+   
+   **If using local keys:** Connection happens automatically (no password prompt)
+   
+   **If using password auth:** Enter the password you set during OS customization
+   
+   **Troubleshooting SSH with Bitwarden:**
+   - If connection fails with "Permission denied (publickey)":
+     - Check Bitwarden is running and unlocked
+     - Verify SSH Agent is enabled in Bitwarden Settings → SSH Agent
+     - Restart your terminal after enabling the SSH agent
+   
+   **Windows (if OpenSSH not available):**
    - Install OpenSSH: Settings → Apps → Optional Features → Add OpenSSH Client
    - Or use PuTTY: Download from https://putty.org/
      - For PuTTY with key auth: Convert private key to .ppk format using PuTTYgen
