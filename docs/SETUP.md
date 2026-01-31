@@ -373,6 +373,8 @@ choco install rpi-imager
    
    **Windows (if OpenSSH not available):**
    - Install OpenSSH: Settings → Apps → Optional Features → Add OpenSSH Client
+   - Or use PuTTY: Download from https://putty.org/
+     - For PuTTY with key auth: Convert private key to .ppk format using PuTTYgen
 
 #### First Login Tasks (Camera Pi)
 
