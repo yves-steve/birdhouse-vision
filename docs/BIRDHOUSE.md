@@ -163,7 +163,7 @@ To fit the Raspberry Pi + Camera Module 3 + weatherproof enclosure:
 | Component | Dimensions | Notes |
 |-----------|------------|-------|
 | Pi Camera Module 3 | 25×24×11.5mm | Sensor only |
-| Camera + ribbon cable | ~100mm reach | Standard 15cm cable recommended |
+| Camera + ribbon cable | ~100mm usable reach inside box | Standard 15cm cable (overall length) recommended |
 | Weatherproof Pi enclosure | ~90×60×30mm | Varies by model |
 | **Total camera assembly** | ~120×70×50mm | Allow extra clearance |
 
