@@ -1,0 +1,14 @@
+# CODEOWNERS for birdhouse-vision
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repo
+* @yves-steve
+
+# GitHub Actions workflows - require explicit review
+/.github/workflows/ @yves-steve
+
+# Documentation
+/docs/ @yves-steve
+
+# Core source code
+/src/ @yves-steve
