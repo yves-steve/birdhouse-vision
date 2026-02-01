@@ -199,7 +199,7 @@ Side View:
 
 - Mount camera **10-15cm above** the entrance hole
 - Angle lens **30-45° downward** to capture arriving birds
-- Use **wide-angle** setting if available (Camera Module 3 has 75° FoV)
+- Use **wide-angle** setting if available (Camera Module 3 variants have different fields of view)
 - Ensure **no IR reflection** from internal surfaces
 
 ---
