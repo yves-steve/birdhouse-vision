@@ -71,6 +71,7 @@ python src/capture/camera.py
 
 | Document | What's Inside |
 |----------|---------------|
+| [BIRDHOUSE.md](docs/BIRDHOUSE.md) | Physical birdhouse options, DIY guides, Finnish suppliers |
 | [SETUP.md](docs/SETUP.md) | OS flashing, SSH setup, software installation |
 | [HARDWARE.md](docs/HARDWARE.md) | Complete BOM with Finnish supplier links & prices |
 | [COSTS.md](docs/COSTS.md) | Budget tracking and running costs |
