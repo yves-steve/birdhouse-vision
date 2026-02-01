@@ -21,10 +21,16 @@ Ready-made birdhouses suitable for camera installation:
 
 | Retailer | Product | Price | Hole Size | Dimensions | Language | Link |
 |----------|---------|-------|-----------|------------|----------|------|
+| **Lintuvaruste** ⭐ | Gable-roof nest boxes | €27-149 | 26-32mm | Various | FI | [View](https://lintuvaruste.fi/collections/harjakattoiset-pontot) |
+| **Puupioni** | Woodcrete swallow nests | €38-45 | Swallow-sized | Various | FI | [View](https://www.puupioni.fi/puubetonipesat/) |
 | Biltema | Fir wood birdhouse | €9.95 | 50mm | 18×19×43cm | EN/FI | [View](https://www.biltema.fi/en-fi/leisure/garden/birds/birdhouses/birdhouse-43-cm-2000054661) |
 | Zooplus | TIAKI Log Cabin | €8.99 | - | 17×12.5×26cm | EN | [View](https://www.zooplus.com/shop/birds/wild_birds/bird_houses/2146795?activeVariant=2146795.0) |
 | Zooplus | TIAKI Green Box | €11.99 | - | 16×13.5×26cm | EN | [View](https://www.zooplus.com/shop/birds/wild_birds/bird_houses/2151030?activeVariant=2151030.0) |
 | Kärkkäinen | Painted birdhouse | €15.95 | 28mm | - | EN/FI | [View](https://www.karkkainen.com/en-en/homemade-birdhouse) |
+
+> ⭐ **Recommended**: [Lintuvaruste](https://lintuvaruste.fi) (Suomen Lintuvaruste Oy) is run by BirdLife Finland — specialist bird equipment store with quality plywood nest boxes (*harjakattoiset pöntöt*) designed for specific species. Higher quality than budget options, excellent for camera projects.
+
+> 🏠 **Swallow Specialist**: [Puupioni](https://www.puupioni.fi/puubetonipesat/) makes handcrafted woodcrete nests (*puubetonipesät*) for house martins (*räystäspääsky*), barn swallows (*haarapääsky*), and swifts (*tervapääsky*). These are predator-resistant and virtually indestructible — "last from father to son". Great for under-eave mounting. Volume discounts available (6+ nests = -15%).
 
 ### What to Look For
 
@@ -58,10 +64,24 @@ When buying a birdhouse for camera installation:
 | Resource | Finnish Name | Description |
 |----------|--------------|-------------|
 | [Main Guide](https://www.birdlife.fi/lintuharrastus/linnunpontot/) | Linnunpöntöt | Overview of nest boxes (*linnunpönttö* = nest box) |
+| [Swallow Nests](https://www.birdlife.fi/suojelu/lajit/autetaan-paaskyja/tekopesat/) | Pääskyjen tekopesät | Artificial nests for swallows |
 | Templates & Dimensions | Mallit ja mitat | Species-specific measurements |
 | Materials & Building | Materiaalit ja rakentaminen | Wood types, tools, construction tips |
 | Mounting & Maintenance | Ripustaminen ja huolto | How to hang and clean your box |
 | Predator Protection | Näädältä suojattu linnunpönttö | Marten-proof designs |
+
+**Arla Finland** — Step-by-step swallow row house tutorial:
+
+| Resource | Description |
+|----------|-------------|
+| [Pääskyrivitalon rakennusohjeet](https://www.arla.fi/tilaatoivolle/ohjeet-puisen-paaskyrivitalon-rakentamiseen/) | Build a 3-unit wooden swallow row house with photos for each step |
+
+**Materials needed** (from Arla guide):
+- 80cm unplaned board (~12.5cm wide, ~20mm thick)
+- 40cm unplaned board (~10cm wide, ~20mm thick)  
+- 70cm marine plywood (~14cm wide, ~10mm thick)
+- Stainless steel screws
+- Screwdriver/drill, saw, jigsaw, sandpaper
 
 > 💡 **Finnish Vocabulary**
 > - *linnunpönttö* – nest box / birdhouse
