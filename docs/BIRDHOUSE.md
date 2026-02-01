@@ -96,9 +96,9 @@ If you prefer English instructions:
 
 | Resource | Organization | Description |
 |----------|--------------|-------------|
-| [Nest Box Plans](https://www.rspb.org.uk/helping-nature/nest-box-plans) | RSPB (UK) | Downloadable PDF plans for various species |
-| [Build a Birdhouse](https://www.audubon.org/news/how-build-birdhouse) | Audubon (US) | Step-by-step guide with diagrams |
-| [Instructables](https://www.instructables.com/howto/birdhouse/) | Community | DIY projects with photos |
+| [Simple Birdhouse for Chickadee](https://www.instructables.com/Simple-Birdhouse-for-Chickadee) | Instructables | Step-by-step plywood birdhouse with photos (works for tits too) |
+| [Nest Box Plans (PDF)](https://www.rspb.org.uk/get-involved/activities/nature-on-your-doorstep/garden-activities/build-a-birdbox/) | RSPB (UK) | Garden birdbox building guide |
+| [Build a Nest Box](https://nestwatch.org/learn/all-about-birdhouses/right-bird-right-house/) | Cornell NestWatch | Species-specific dimensions and placement guide |
 
 ### Recommended DIY Dimensions
 
