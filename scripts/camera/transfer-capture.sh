@@ -25,7 +25,6 @@ NAS_USER="birdhouse"
 NAS_BASE_PATH="/mnt/birdhouse/captures"
 
 # Local paths
-LOCAL_CAPTURE_DIR="/home/birdhouse/captures"
 LOG_FILE="/home/birdhouse/logs/transfer.log"
 
 # Transfer settings
