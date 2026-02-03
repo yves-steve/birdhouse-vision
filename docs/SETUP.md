@@ -418,10 +418,485 @@ Coming soon...
 
 ### NAS Pi Setup
 
-Coming soon...
-- Configure Samsung T7 SSD
-- Install Samba for network storage
-- Set up automatic backup
+This section covers configuring the Samsung T7 SSD, installing Samba for network access, and setting up the data lifecycle management.
+
+#### Data Lifecycle Overview
+
+Before diving into configuration, understand how data flows through the system:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           COMPLETE DATA LIFECYCLE                               │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+  CAMERA PI                         NAS PI                           YOUR DEVICES
+  ┌──────────┐                     ┌──────────┐                     ┌──────────┐
+  │  1. PIR  │                     │          │                     │          │
+  │  Detects │                     │   5. SSD │    [birdhouse]      │  Finder  │
+  │  Motion  │                     │   Stores │◄──────────────────► │    or    │
+  └────┬─────┘                     │   Image  │   Read/Write        │ Explorer │
+       │                           │          │                     │          │
+       ▼                           │          │   [birdhouse-guest] │  Family  │
+  ┌──────────┐                     │          │◄──────────────────► │  Devices │
+  │ 2. Capture                     │          │   Read-Only         │          │
+  │   Image  │                     └────┬─────┘                     └──────────┘
+  └────┬─────┘                          │
+       │                                │
+       ▼                                ▼
+  ┌──────────┐    IMMEDIATE       ┌──────────┐
+  │ 3. Save  │    rsync/SSH       │ 6. DAILY │
+  │ to       │───────────────────►│ LIFECYCLE│
+  │ microSD  │                    │ CHECK    │
+  └────┬─────┘                    └────┬─────┘
+       │                               │
+       ▼                               ▼
+  ┌──────────┐                   ┌───────────────────────────────┐
+  │ 4. DELETE│                   │  Age > 365 days? → DELETE     │
+  │ local    │                   │  Disk ≥ 95%?    → DELETE      │
+  │ (success)│                   │                   OLDEST      │
+  └──────────┘                   │                   until < 90% │
+                                 └───────────────────────────────┘
+
+  ════════════════════════════════════════════════════════════════════════════════
+   RETENTION POLICY:
+  ════════════════════════════════════════════════════════════════════════════════
+   • NORMAL:    Delete captures older than 365 days
+   • EMERGENCY: If disk ≥ 95%, delete oldest files until disk < 90%
+   • PRIORITY:  Disk space check runs FIRST (prevents full disk)
+```
+
+#### Step 1: Connect and Identify the Samsung T7 SSD
+
+1. **Connect the SSD** to a USB 3.0 port (blue port) on the NAS Pi
+
+2. **SSH into the NAS Pi**:
+   ```bash
+   ssh birdhouse@birdhouse-nas.local
+   ```
+
+3. **Identify the SSD**:
+   ```bash
+   # List all block devices
+   lsblk
+   
+   # You should see something like:
+   # NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+   # sda           8:0    0 931.5G  0 disk 
+   # └─sda1        8:1    0 931.5G  0 part 
+   # mmcblk0     179:0    0  29.7G  0 disk 
+   # ├─mmcblk0p1 179:1    0   512M  0 part /boot/firmware
+   # └─mmcblk0p2 179:2    0  29.2G  0 part /
+   
+   # Verify it's the Samsung T7 (should show ~1TB)
+   sudo fdisk -l /dev/sda
+   ```
+
+#### Step 2: Format the SSD (ext4)
+
+**⚠️ WARNING**: This will erase all data on the SSD!
+
+```bash
+# Create a new partition table and partition
+sudo parted /dev/sda --script mklabel gpt
+sudo parted /dev/sda --script mkpart primary ext4 0% 100%
+
+# Format as ext4 with a label
+sudo mkfs.ext4 -L birdhouse /dev/sda1
+
+# Verify the format
+sudo blkid /dev/sda1
+# Should show: /dev/sda1: LABEL="birdhouse" UUID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" TYPE="ext4"
+```
+
+#### Step 3: Create Mount Point and Configure Auto-Mount
+
+```bash
+# Create the mount point directory
+sudo mkdir -p /mnt/birdhouse
+
+# Get the UUID of the partition (more reliable than /dev/sda1)
+sudo blkid /dev/sda1 | grep -oP 'UUID="\K[^"]+'
+# Copy this UUID for the next step
+
+# Edit fstab to auto-mount on boot
+sudo nano /etc/fstab
+```
+
+Add this line at the end of `/etc/fstab` (replace `YOUR-UUID-HERE` with the actual UUID):
+
+```
+UUID=YOUR-UUID-HERE  /mnt/birdhouse  ext4  defaults,nofail,x-systemd.device-timeout=30  0  2
+```
+
+**Mount options explained**:
+- `defaults` — standard mount options (rw, suid, dev, exec, auto, nouser, async)
+- `nofail` — boot continues even if SSD is disconnected (prevents boot failure)
+- `x-systemd.device-timeout=30` — wait up to 30 seconds for USB device
+
+```bash
+# Test the mount (without rebooting)
+sudo mount -a
+
+# Verify it's mounted
+df -h /mnt/birdhouse
+# Should show ~932GB available
+
+# Create directory structure
+sudo mkdir -p /mnt/birdhouse/captures
+sudo mkdir -p /mnt/birdhouse/logs
+
+# Set ownership to birdhouse user
+sudo chown -R birdhouse:birdhouse /mnt/birdhouse
+
+# Verify permissions
+ls -la /mnt/birdhouse
+```
+
+#### Step 4: Install and Configure Samba
+
+```bash
+# Install Samba
+sudo apt update
+sudo apt install -y samba samba-common-bin
+
+# Backup original config
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
+
+# Create Samba password for birdhouse user
+sudo smbpasswd -a birdhouse
+# Enter a password (can be different from SSH password)
+# This is for the authenticated [birdhouse] share
+
+# Enable the user
+sudo smbpasswd -e birdhouse
+```
+
+Edit the Samba configuration:
+
+```bash
+sudo nano /etc/samba/smb.conf
+```
+
+Add the following at the end of the file:
+
+```ini
+#======================= Birdhouse Shares =======================
+
+[birdhouse]
+   comment = Birdhouse Captures (Authenticated)
+   path = /mnt/birdhouse/captures
+   browseable = yes
+   read only = no
+   writable = yes
+   valid users = birdhouse
+   create mask = 0644
+   directory mask = 0755
+   force user = birdhouse
+   force group = birdhouse
+
+[birdhouse-guest]
+   comment = Birdhouse Captures (Guest Read-Only)
+   path = /mnt/birdhouse/captures
+   browseable = yes
+   read only = yes
+   guest ok = yes
+   guest only = yes
+   force user = nobody
+   force group = nogroup
+```
+
+**Share comparison**:
+
+```
+┌───────────────────────────────────┬───────────────────────────────────┐
+│       [birdhouse]                 │       [birdhouse-guest]           │
+│       AUTHENTICATED               │       GUEST READ-ONLY             │
+├───────────────────────────────────┼───────────────────────────────────┤
+│                                   │                                   │
+│  Access: Read + Write             │  Access: Read Only                │
+│  Auth:   Username + Password      │  Auth:   None (open)              │
+│  User:   birdhouse                │  User:   guest                    │
+│                                   │                                   │
+│  Use for:                         │  Use for:                         │
+│  • Managing files                 │  • Quick viewing                  │
+│  • Deleting captures              │  • Sharing with family            │
+│  • Full admin access              │  • No risk of accidental delete   │
+│                                   │                                   │
+└───────────────────────────────────┴───────────────────────────────────┘
+```
+
+```bash
+# Test the configuration
+sudo testparm
+
+# Restart Samba services
+sudo systemctl restart smbd nmbd
+
+# Enable Samba to start on boot
+sudo systemctl enable smbd nmbd
+
+# Check status
+sudo systemctl status smbd
+```
+
+#### Step 5: Connect from Your Devices
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           CONNECTING TO NAS SHARE                               │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────┐
+  │           macOS (Finder)                │
+  ├─────────────────────────────────────────┤
+  │                                         │
+  │  Authenticated Share (Read/Write):      │
+  │  ─────────────────────────────────      │
+  │  1. Open Finder                         │
+  │  2. Press ⌘+K (Go → Connect to Server)  │
+  │  3. Enter:                              │
+  │     smb://birdhouse-nas.local/birdhouse │
+  │  4. Click "Connect"                     │
+  │  5. Select "Registered User"            │
+  │  6. Enter credentials:                  │
+  │     Username: birdhouse                 │
+  │     Password: [your samba password]     │
+  │  7. ✅ Check "Remember this password"   │
+  │                                         │
+  │  Guest Share (Read-Only):               │
+  │  ────────────────────────               │
+  │  1. Press ⌘+K                           │
+  │  2. Enter:                              │
+  │     smb://birdhouse-nas.local/          │
+  │            birdhouse-guest              │
+  │  3. Select "Guest"                      │
+  │  4. Click "Connect"                     │
+  │                                         │
+  │  📁 Share appears in Finder sidebar     │
+  │     under "Locations"                   │
+  │                                         │
+  └─────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────┐
+  │         Windows 10/11 (Explorer)        │
+  ├─────────────────────────────────────────┤
+  │                                         │
+  │  Authenticated Share (Read/Write):      │
+  │  ─────────────────────────────────      │
+  │  1. Open File Explorer                  │
+  │  2. Click address bar, type:            │
+  │     \\birdhouse-nas.local\birdhouse     │
+  │  3. Press Enter                         │
+  │  4. Enter credentials:                  │
+  │     Username: birdhouse                 │
+  │     Password: [your samba password]     │
+  │  5. ✅ Check "Remember my credentials"  │
+  │                                         │
+  │  Guest Share (Read-Only):               │
+  │  ────────────────────────               │
+  │  1. In address bar, type:               │
+  │     \\birdhouse-nas.local\              │
+  │            birdhouse-guest              │
+  │  2. Press Enter (no password needed)    │
+  │                                         │
+  │  Map as Network Drive (Optional):       │
+  │  ────────────────────────────────       │
+  │  1. Right-click "This PC"               │
+  │  2. Select "Map network drive"          │
+  │  3. Choose drive letter (e.g., B:)      │
+  │  4. Folder:                             │
+  │     \\birdhouse-nas.local\birdhouse     │
+  │  5. ✅ Check "Reconnect at sign-in"     │
+  │  6. Click "Finish", enter credentials   │
+  │                                         │
+  │  📁 Drive appears in "This PC"          │
+  │                                         │
+  └─────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────┐
+  │            Troubleshooting              │
+  ├─────────────────────────────────────────┤
+  │                                         │
+  │  Can't connect? Try IP address instead: │
+  │                                         │
+  │  macOS:   smb://192.168.1.100/birdhouse │
+  │  Windows: \\192.168.1.100\birdhouse     │
+  │                                         │
+  │  Find NAS IP:                           │
+  │  $ ping birdhouse-nas.local             │
+  │                                         │
+  │  Windows: Enable SMB 1.0 if needed:     │
+  │  Control Panel → Programs → Turn        │
+  │  Windows features on/off → SMB 1.0      │
+  │  (Usually not needed for modern Samba)  │
+  │                                         │
+  └─────────────────────────────────────────┘
+```
+
+#### Step 6: Set Up Data Lifecycle Management
+
+The lifecycle script handles automatic cleanup based on retention policy.
+
+```bash
+# Create scripts directory on NAS Pi
+mkdir -p ~/scripts/nas
+
+# Create the lifecycle cleanup script
+nano ~/scripts/nas/lifecycle-cleanup.sh
+```
+
+Copy the lifecycle script from the project repository (see `scripts/nas/lifecycle-cleanup.sh`), then:
+
+```bash
+# Make it executable
+chmod +x ~/scripts/nas/lifecycle-cleanup.sh
+
+# Test run (dry-run mode)
+~/scripts/nas/lifecycle-cleanup.sh --dry-run
+```
+
+#### Step 7: Install Systemd Timer for Daily Cleanup
+
+```bash
+# Create systemd service file
+sudo nano /etc/systemd/system/birdhouse-lifecycle.service
+```
+
+Add:
+
+```ini
+[Unit]
+Description=Birdhouse Data Lifecycle Cleanup
+After=mnt-birdhouse.mount
+
+[Service]
+Type=oneshot
+User=birdhouse
+ExecStart=/home/birdhouse/scripts/nas/lifecycle-cleanup.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# Create systemd timer file
+sudo nano /etc/systemd/system/birdhouse-lifecycle.timer
+```
+
+Add:
+
+```ini
+[Unit]
+Description=Daily Birdhouse Data Lifecycle Cleanup
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+```bash
+# Enable and start the timer
+sudo systemctl daemon-reload
+sudo systemctl enable birdhouse-lifecycle.timer
+sudo systemctl start birdhouse-lifecycle.timer
+
+# Verify timer is active
+sudo systemctl list-timers | grep birdhouse
+
+# Check timer status
+sudo systemctl status birdhouse-lifecycle.timer
+```
+
+#### Step 8: Directory Structure
+
+After setup, your SSD will have this structure:
+
+```
+/mnt/birdhouse/
+├── captures/
+│   ├── 2026/
+│   │   ├── 01/
+│   │   │   ├── 15/
+│   │   │   │   ├── 2026-01-15_08-23-45_motion.jpg
+│   │   │   │   ├── 2026-01-15_08-23-45_motion.json  (metadata)
+│   │   │   │   ├── 2026-01-15_14-07-12_motion.jpg
+│   │   │   │   └── ...
+│   │   │   ├── 16/
+│   │   │   └── ...
+│   │   ├── 02/
+│   │   └── ...
+│   └── 2025/
+│       └── ... (auto-deleted after 365 days)
+└── logs/
+    └── lifecycle.log
+```
+
+#### Lifecycle Retention Logic
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                         DAILY LIFECYCLE CHECK (NAS PI)                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+                              ┌─────────────────┐
+                              │  START CLEANUP  │
+                              │  (daily timer)  │
+                              └────────┬────────┘
+                                       │
+                                       ▼
+                              ┌─────────────────┐
+                              │  Check disk     │
+                              │  usage on SSD   │
+                              └────────┬────────┘
+                                       │
+                         ┌─────────────┴─────────────┐
+                         │                           │
+                         ▼                           ▼
+                ┌─────────────────┐        ┌─────────────────┐
+                │  Disk ≥ 95%?   │        │  Disk < 95%     │
+                │  EMERGENCY MODE │        │  NORMAL MODE    │
+                └────────┬────────┘        └────────┬────────┘
+                         │                          │
+                         ▼                          ▼
+                ┌─────────────────┐        ┌─────────────────┐
+                │  Delete OLDEST  │        │  Delete files   │
+                │  files first    │        │  older than     │
+                │  until < 90%    │        │  365 DAYS       │
+                └────────┬────────┘        └────────┬────────┘
+                         │                          │
+                         └──────────┬───────────────┘
+                                    │
+                                    ▼
+                           ┌─────────────────┐
+                           │  Log results    │
+                           │  Exit           │
+                           └─────────────────┘
+```
+
+#### Verify Everything Works
+
+```bash
+# Check SSD is mounted
+df -h /mnt/birdhouse
+
+# Check Samba is running
+sudo systemctl status smbd
+
+# Check timer is scheduled
+sudo systemctl list-timers | grep birdhouse
+
+# Test Samba from NAS Pi itself
+smbclient -L localhost -U birdhouse
+
+# View lifecycle logs (after first run)
+cat /mnt/birdhouse/logs/lifecycle.log
+```
 
 ---
 
@@ -491,6 +966,91 @@ vcgencmd get_camera
 # If not, check ribbon cable connection
 # Ensure blue side faces USB ports
 ```
+
+### Windows Cannot Access Samba Share
+
+1. **Enable File and Printer Sharing in Windows Firewall**:
+   - Open **Windows Security** → **Firewall & network protection**
+   - Click **Allow an app through firewall**
+   - Find **File and Printer Sharing** and ensure both **Private** and **Public** are checked
+   - Or run in elevated PowerShell:
+     ```powershell
+     Set-NetFirewallRule -DisplayGroup "File And Printer Sharing" -Enabled True
+     ```
+
+2. **Windows can't resolve `.local` hostname**:
+   - Use the IP address instead: `\\192.168.x.x\birdhouse`
+   - Find IP: `ping birdhouse-nas.local` (from a device that resolves it)
+   - Or check your router's DHCP client list
+
+3. **Enable SMB client** (if disabled):
+   - Control Panel → Programs → Turn Windows features on/off
+   - Check **SMB 1.0/CIFS File Sharing Support** → **SMB 1.0/CIFS Client**
+   - Reboot (usually not needed for modern Samba)
+
+4. **Clear cached credentials** (if password changed):
+   ```powershell
+   # List saved credentials
+   cmdkey /list
+   
+   # Delete specific credential
+   cmdkey /delete:birdhouse-nas.local
+   ```
+
+### WiFi Not Connecting on Boot (Raspberry Pi OS Bookworm)
+
+Raspberry Pi OS Bookworm uses **NetworkManager** instead of `wpa_supplicant`. If WiFi isn't saved:
+
+1. **Check current connections**:
+   ```bash
+   nmcli connection show
+   ```
+
+2. **Connect and save WiFi**:
+   ```bash
+   # List available networks
+   nmcli device wifi list
+   
+   # Connect (use single quotes if password has special characters)
+   nmcli device wifi connect "YourSSID" password 'YourPassword'
+   ```
+
+3. **Verify autoconnect is enabled**:
+   ```bash
+   nmcli connection show "YourSSID" | grep autoconnect
+   # Should show: connection.autoconnect: yes
+   ```
+
+4. **If connection exists but won't autoconnect**:
+   ```bash
+   nmcli connection modify "YourSSID" connection.autoconnect yes
+   ```
+
+5. **Check WiFi status after reboot**:
+   ```bash
+   nmcli device status
+   # wifi should show "connected"
+   
+   ip addr show wlan0
+   # Should show an IP address
+   ```
+
+### macOS Cannot Access Samba Share
+
+1. **Use IP address if `.local` doesn't resolve**:
+   - Finder → ⌘+K → `smb://192.168.x.x/birdhouse`
+
+2. **Reset SMB credentials** (if password changed):
+   - Open **Keychain Access**
+   - Search for `birdhouse-nas`
+   - Delete the saved password
+   - Reconnect and enter new password
+
+3. **SMB version mismatch**:
+   ```bash
+   # On the Pi, check Samba allows SMB2/3 (should be default)
+   testparm -s 2>/dev/null | grep "server min protocol"
+   ```
 
 ---
 

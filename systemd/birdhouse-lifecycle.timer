@@ -1,0 +1,41 @@
+#
+# Birdhouse Vision - Data Lifecycle Cleanup Timer
+#
+# This systemd timer triggers the lifecycle cleanup service daily.
+# It runs once per day with a random delay up to 1 hour to avoid
+# exact timing predictability and spread load.
+#
+# Installation:
+#   sudo cp birdhouse-lifecycle.service /etc/systemd/system/
+#   sudo cp birdhouse-lifecycle.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable birdhouse-lifecycle.timer
+#   sudo systemctl start birdhouse-lifecycle.timer
+#
+# Check timer status:
+#   sudo systemctl list-timers | grep birdhouse
+#   sudo systemctl status birdhouse-lifecycle.timer
+#
+# Check when it will next run:
+#   systemctl show birdhouse-lifecycle.timer --property=NextElapseUSecRealtime
+
+[Unit]
+Description=Daily Birdhouse Data Lifecycle Cleanup
+Documentation=https://github.com/yves-steve/birdhouse-vision
+
+[Timer]
+# Run daily at 3:00 AM (low activity period)
+OnCalendar=*-*-* 03:00:00
+
+# Add random delay up to 1 hour to spread load
+RandomizedDelaySec=1h
+
+# If the system was off when the timer should have triggered,
+# run it as soon as possible after boot
+Persistent=true
+
+# Wait 5 minutes after boot before running (let system stabilize)
+OnBootSec=5min
+
+[Install]
+WantedBy=timers.target

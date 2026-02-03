@@ -150,12 +150,17 @@ logger.debug(f"Using AWS region: {region}")
 
 ```
 src/
-  capture/      # Camera control & image capture (picamera2)
-  detection/    # Motion detection logic (gpiozero PIR sensor)
-  upload/       # AWS S3/Rekognition integration (boto3)
-scripts/        # Utility scripts (gallery generation)
-docs/           # Documentation (HARDWARE, COSTS, SETUP, etc.)
-.github/        # GitHub Actions workflows
+  capture/        # Camera control & image capture (picamera2)
+  detection/      # Motion detection logic (gpiozero PIR sensor)
+  upload/         # AWS S3/Rekognition integration (boto3)
+scripts/
+  camera/         # Camera Pi scripts (transfer-capture.sh)
+  nas/            # NAS Pi scripts (lifecycle-cleanup.sh)
+config/
+  examples/       # Configuration templates (smb.conf.example)
+systemd/          # Systemd service and timer units
+docs/             # Documentation (HARDWARE, COSTS, SETUP, etc.)
+.github/          # GitHub Actions workflows
 ```
 
 ---

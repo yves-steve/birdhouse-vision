@@ -1,0 +1,55 @@
+#
+# Birdhouse Vision - Data Lifecycle Cleanup Service
+#
+# This systemd service runs the lifecycle cleanup script.
+# It is triggered by birdhouse-lifecycle.timer (daily).
+#
+# Installation:
+#   sudo cp birdhouse-lifecycle.service /etc/systemd/system/
+#   sudo cp birdhouse-lifecycle.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable birdhouse-lifecycle.timer
+#   sudo systemctl start birdhouse-lifecycle.timer
+#
+# Manual run:
+#   sudo systemctl start birdhouse-lifecycle.service
+#
+# Check status:
+#   sudo systemctl status birdhouse-lifecycle.service
+#   sudo journalctl -u birdhouse-lifecycle.service
+
+[Unit]
+Description=Birdhouse Data Lifecycle Cleanup
+Documentation=https://github.com/yves-steve/birdhouse-vision
+After=mnt-birdhouse.mount
+Wants=mnt-birdhouse.mount
+
+# Don't run if SSD is not mounted
+ConditionPathIsMountPoint=/mnt/birdhouse
+
+[Service]
+Type=oneshot
+User=birdhouse
+Group=birdhouse
+
+# Run the lifecycle cleanup script
+ExecStart=/home/birdhouse/scripts/nas/lifecycle-cleanup.sh
+
+# Logging to journal
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=birdhouse-lifecycle
+
+# Security hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/mnt/birdhouse
+
+# Resource limits
+Nice=19
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=multi-user.target
