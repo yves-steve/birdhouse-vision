@@ -1,5 +1,8 @@
 name: Shell Script Scan
 
+permissions:
+  contents: read
+
 on:
   push:
     paths:
