@@ -158,6 +158,11 @@ emergency_cleanup() {
 # ============================================================================
 
 main() {
+    # Create log directory first so initial log messages are captured
+    if [[ "$DRY_RUN" == false ]]; then
+        mkdir -p "$LOG_DIR"
+    fi
+    
     log "INFO" "=========================================="
     log "INFO" "Birdhouse Data Lifecycle Cleanup Starting"
     log "INFO" "=========================================="
@@ -179,11 +184,6 @@ main() {
         log "ERROR" "Captures directory not found: ${CAPTURES_DIR}"
         log "ERROR" "Directory structure may be incomplete"
         exit 1
-    fi
-    
-    # Create log directory if needed
-    if [[ "$DRY_RUN" == false ]]; then
-        mkdir -p "$LOG_DIR"
     fi
     
     # Get initial stats
