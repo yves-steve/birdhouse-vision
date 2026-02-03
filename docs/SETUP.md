@@ -973,10 +973,10 @@ vcgencmd get_camera
    - Find IP: `ping birdhouse-nas.local` (from a device that resolves it)
    - Or check your router's DHCP client list
 
-3. **Enable SMB client** (if disabled):
-   - Control Panel → Programs → Turn Windows features on/off
-   - Check **SMB 1.0/CIFS File Sharing Support** → **SMB 1.0/CIFS Client**
-   - Reboot (usually not needed for modern Samba)
+3. **Verify SMB2/SMB3 and Windows sharing settings**:
+   - Ensure your NAS/Samba server is configured to allow SMB2/SMB3 (for example, `min protocol = SMB2` in `smb.conf`)
+   - On Windows, open **Control Panel** → **Network and Sharing Center** → **Advanced sharing settings**
+   - Under your active profile, make sure **Turn on network discovery** and **Turn on file and printer sharing** are selected
 
 4. **Clear cached credentials** (if password changed):
    ```powershell
