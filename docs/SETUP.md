@@ -725,11 +725,13 @@ sudo systemctl status smbd
   │  Find NAS IP:                           │
   │  $ ping birdhouse-nas.local             │
   │                                         │
-  │  Windows: Enable SMB 1.0 if needed:     │
-  │  Control Panel → Programs → Turn        │
-  │  Windows features on/off → SMB 1.0      │
-  │  (Usually not needed for modern Samba)  │
-  │                                         │
+  │  Windows checks:                        │
+  │  - Verify user/password are correct.    │
+  │  - Allow File & Printer Sharing in      │
+  │    Windows Defender Firewall.           │
+  │  - Keep SMB2/SMB3 enabled; do NOT       │
+  │    enable legacy SMB1 (deprecated,      │
+  │    insecure).                           │
   └─────────────────────────────────────────┘
 ```
 
