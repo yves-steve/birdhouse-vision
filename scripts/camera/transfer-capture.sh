@@ -107,6 +107,22 @@ transfer_file() {
         "${NAS_USER}@${NAS_HOST}:${remote_path}/${filename}"
 }
 
+get_local_file_size() {
+    local file="$1"
+    stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null
+}
+
+get_remote_file_size() {
+    local remote_path="$1"
+    local filename="$2"
+    local remote_file="${remote_path}/${filename}"
+    local remote_file_escaped
+    remote_file_escaped=$(printf '%q' "$remote_file")
+    
+    ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
+        "stat -f%z $remote_file_escaped 2>/dev/null || stat -c%s $remote_file_escaped 2>/dev/null"
+}
+
 verify_transfer() {
     local local_file="$1"
     local remote_path="$2"
@@ -115,20 +131,51 @@ verify_transfer() {
 
     # Get local file size
     local local_size
-    local_size=$(stat -f%z "$local_file" 2>/dev/null || stat -c%s "$local_file" 2>/dev/null)
+    local_size=$(get_local_file_size "$local_file")
 
     # Get remote file size
     local remote_size
-    local remote_file="${remote_path}/${filename}"
-    local remote_file_escaped
-    remote_file_escaped=$(printf '%q' "$remote_file")
-    remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
-        "stat -f%z $remote_file_escaped 2>/dev/null || stat -c%s $remote_file_escaped 2>/dev/null")
-    if [[ "$local_size" == "$remote_size" ]]; then
-        return 0
-    else
+    remote_size=$(get_remote_file_size "$remote_path" "$filename")
+    
+    # Check if remote size was retrieved successfully
+    if [[ -z "$remote_size" ]]; then
+        log "WARN" "Main file verification failed: could not retrieve remote file size"
         return 1
     fi
+    
+    if [[ "$local_size" != "$remote_size" ]]; then
+        log "WARN" "Main file verification failed: local=${local_size} remote=${remote_size}"
+        return 1
+    fi
+    
+    # Check for associated metadata file and verify if exists
+    local base_name="${local_file%.*}"
+    local metadata_file="${base_name}.json"
+    
+    if [[ -f "$metadata_file" ]]; then
+        local metadata_filename
+        metadata_filename=$(basename "$metadata_file")
+        local metadata_local_size
+        metadata_local_size=$(get_local_file_size "$metadata_file")
+        
+        local metadata_remote_size
+        metadata_remote_size=$(get_remote_file_size "$remote_path" "$metadata_filename")
+        
+        # Check if metadata remote size was retrieved successfully
+        if [[ -z "$metadata_remote_size" ]]; then
+            log "WARN" "Metadata file verification failed: could not retrieve remote file size"
+            return 1
+        fi
+        
+        if [[ "$metadata_local_size" != "$metadata_remote_size" ]]; then
+            log "WARN" "Metadata file verification failed: local=${metadata_local_size} remote=${metadata_remote_size}"
+            return 1
+        fi
+        
+        log "INFO" "Metadata file verified: ${metadata_filename}"
+    fi
+    
+    return 0
 }
 
 transfer_with_metadata() {
