@@ -762,22 +762,10 @@ chmod +x ~/scripts/nas/lifecycle-cleanup.sh
 sudo nano /etc/systemd/system/birdhouse-lifecycle.service
 ```
 
-Add:
+Copy the versioned systemd service unit from the repository into `/etc/systemd/system/`:
 
-```ini
-[Unit]
-Description=Birdhouse Data Lifecycle Cleanup
-After=mnt-birdhouse.mount
-
-[Service]
-Type=oneshot
-User=birdhouse
-ExecStart=/home/birdhouse/scripts/nas/lifecycle-cleanup.sh
-StandardOutput=journal
-StandardError=journal
-
-[Install]
-WantedBy=multi-user.target
+```bash
+sudo cp /path/to/birdhouse-vision/systemd/birdhouse-lifecycle.service /etc/systemd/system/birdhouse-lifecycle.service
 ```
 
 ```bash
