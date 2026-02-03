@@ -124,11 +124,37 @@ verify_transfer() {
     remote_file_escaped=$(printf '%q' "$remote_file")
     remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
         "stat -f%z $remote_file_escaped 2>/dev/null || stat -c%s $remote_file_escaped 2>/dev/null")
-    if [[ "$local_size" == "$remote_size" ]]; then
-        return 0
-    else
+    if [[ "$local_size" != "$remote_size" ]]; then
+        log "WARN" "Main file verification failed: local=${local_size} remote=${remote_size}"
         return 1
     fi
+    
+    # Check for associated metadata file and verify if exists
+    local base_name="${local_file%.*}"
+    local metadata_file="${base_name}.json"
+    
+    if [[ -f "$metadata_file" ]]; then
+        local metadata_filename
+        metadata_filename=$(basename "$metadata_file")
+        local metadata_local_size
+        metadata_local_size=$(stat -f%z "$metadata_file" 2>/dev/null || stat -c%s "$metadata_file" 2>/dev/null)
+        
+        local metadata_remote_file="${remote_path}/${metadata_filename}"
+        local metadata_remote_file_escaped
+        metadata_remote_file_escaped=$(printf '%q' "$metadata_remote_file")
+        local metadata_remote_size
+        metadata_remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
+            "stat -f%z $metadata_remote_file_escaped 2>/dev/null || stat -c%s $metadata_remote_file_escaped 2>/dev/null")
+        
+        if [[ "$metadata_local_size" != "$metadata_remote_size" ]]; then
+            log "WARN" "Metadata file verification failed: local=${metadata_local_size} remote=${metadata_remote_size}"
+            return 1
+        fi
+        
+        log "INFO" "Metadata file verified: ${metadata_filename}"
+    fi
+    
+    return 0
 }
 
 transfer_with_metadata() {
