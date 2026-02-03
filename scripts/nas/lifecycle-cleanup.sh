@@ -83,7 +83,7 @@ delete_old_files() {
         if [[ "$DRY_RUN" == true ]]; then
             log "DRY-RUN" "Would delete: $file ($(numfmt --to=iec-i --suffix=B $file_size 2>/dev/null || echo "${file_size}B"))"
         else
-            rm -f "$file"
+            rm -f -- "$file"
             log "INFO" "Deleted: $file"
         fi
         
