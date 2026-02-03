@@ -124,6 +124,13 @@ verify_transfer() {
     remote_file_escaped=$(printf '%q' "$remote_file")
     remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
         "stat -f%z $remote_file_escaped 2>/dev/null || stat -c%s $remote_file_escaped 2>/dev/null")
+    
+    # Check if remote size was retrieved successfully
+    if [[ -z "$remote_size" ]]; then
+        log "WARN" "Main file verification failed: could not retrieve remote file size"
+        return 1
+    fi
+    
     if [[ "$local_size" != "$remote_size" ]]; then
         log "WARN" "Main file verification failed: local=${local_size} remote=${remote_size}"
         return 1
@@ -145,6 +152,12 @@ verify_transfer() {
         local metadata_remote_size
         metadata_remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
             "stat -f%z $metadata_remote_file_escaped 2>/dev/null || stat -c%s $metadata_remote_file_escaped 2>/dev/null")
+        
+        # Check if metadata remote size was retrieved successfully
+        if [[ -z "$metadata_remote_size" ]]; then
+            log "WARN" "Metadata file verification failed: could not retrieve remote file size"
+            return 1
+        fi
         
         if [[ "$metadata_local_size" != "$metadata_remote_size" ]]; then
             log "WARN" "Metadata file verification failed: local=${metadata_local_size} remote=${metadata_remote_size}"
