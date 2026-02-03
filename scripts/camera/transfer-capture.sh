@@ -107,6 +107,22 @@ transfer_file() {
         "${NAS_USER}@${NAS_HOST}:${remote_path}/${filename}"
 }
 
+get_local_file_size() {
+    local file="$1"
+    stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null
+}
+
+get_remote_file_size() {
+    local remote_path="$1"
+    local filename="$2"
+    local remote_file="${remote_path}/${filename}"
+    local remote_file_escaped
+    remote_file_escaped=$(printf '%q' "$remote_file")
+    
+    ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
+        "stat -f%z $remote_file_escaped 2>/dev/null || stat -c%s $remote_file_escaped 2>/dev/null"
+}
+
 verify_transfer() {
     local local_file="$1"
     local remote_path="$2"
@@ -115,15 +131,11 @@ verify_transfer() {
 
     # Get local file size
     local local_size
-    local_size=$(stat -f%z "$local_file" 2>/dev/null || stat -c%s "$local_file" 2>/dev/null)
+    local_size=$(get_local_file_size "$local_file")
 
     # Get remote file size
     local remote_size
-    local remote_file="${remote_path}/${filename}"
-    local remote_file_escaped
-    remote_file_escaped=$(printf '%q' "$remote_file")
-    remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
-        "stat -f%z $remote_file_escaped 2>/dev/null || stat -c%s $remote_file_escaped 2>/dev/null")
+    remote_size=$(get_remote_file_size "$remote_path" "$filename")
     
     # Check if remote size was retrieved successfully
     if [[ -z "$remote_size" ]]; then
@@ -144,14 +156,10 @@ verify_transfer() {
         local metadata_filename
         metadata_filename=$(basename "$metadata_file")
         local metadata_local_size
-        metadata_local_size=$(stat -f%z "$metadata_file" 2>/dev/null || stat -c%s "$metadata_file" 2>/dev/null)
+        metadata_local_size=$(get_local_file_size "$metadata_file")
         
-        local metadata_remote_file="${remote_path}/${metadata_filename}"
-        local metadata_remote_file_escaped
-        metadata_remote_file_escaped=$(printf '%q' "$metadata_remote_file")
         local metadata_remote_size
-        metadata_remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
-            "stat -f%z $metadata_remote_file_escaped 2>/dev/null || stat -c%s $metadata_remote_file_escaped 2>/dev/null")
+        metadata_remote_size=$(get_remote_file_size "$remote_path" "$metadata_filename")
         
         # Check if metadata remote size was retrieved successfully
         if [[ -z "$metadata_remote_size" ]]; then
