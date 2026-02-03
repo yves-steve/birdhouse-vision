@@ -71,9 +71,9 @@ python src/capture/camera.py
 
 | Document | What's Inside |
 |----------|---------------|
-| [BIRDHOUSE.md](docs/BIRDHOUSE.md) | Physical birdhouse options, DIY guides, Finnish suppliers |
-| [SETUP.md](docs/SETUP.md) | OS flashing, SSH setup, software installation |
+| [SETUP.md](docs/SETUP.md) | Complete setup guide: OS flashing, SSH, NAS storage, Samba shares |
 | [HARDWARE.md](docs/HARDWARE.md) | Complete BOM with Finnish supplier links & prices |
+| [BIRDHOUSE.md](docs/BIRDHOUSE.md) | Physical birdhouse options, DIY guides, Finnish suppliers |
 | [COSTS.md](docs/COSTS.md) | Budget tracking and running costs |
 | [WIFI_VS_ETHERNET.md](docs/WIFI_VS_ETHERNET.md) | Why PoE beats WiFi for outdoor cameras |
 
@@ -83,6 +83,7 @@ python src/capture/camera.py
 |-------|--------|-------------|
 | Hardware Research | ✅ Done | Component selection, supplier sourcing |
 | Camera Module | ✅ Done | Basic capture with picamera2 |
+| NAS Storage | ✅ Done | Samsung T7 SSD, Samba shares, data lifecycle |
 | Motion Detection | 🔄 In Progress | PIR sensor integration |
 | AWS Integration | ⏳ Planned | Rekognition for species ID |
 | Web Gallery | ⏳ Planned | Browse captured images |
@@ -101,8 +102,15 @@ python src/capture/camera.py
 
 ```
 birdhouse-vision/
-├── src/capture/       # Camera and motion detection
-├── scripts/           # Utility scripts
+├── src/
+│   ├── capture/       # Camera and motion detection
+│   ├── detection/     # PIR sensor integration
+│   └── upload/        # AWS S3/Rekognition integration
+├── scripts/
+│   ├── camera/        # Camera Pi scripts (transfer-capture.sh)
+│   └── nas/           # NAS Pi scripts (lifecycle-cleanup.sh)
+├── config/examples/   # Configuration templates (smb.conf.example)
+├── systemd/           # Systemd service and timer units
 ├── docs/              # Documentation
 └── requirements.txt   # Python dependencies
 ```
