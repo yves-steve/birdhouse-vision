@@ -85,11 +85,20 @@ get_remote_path() {
 
 check_nas_reachable() {
     # Check if NAS Pi is reachable via SSH
-    if ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" "echo ok" &>/dev/null; then
-        return 0
-    else
+    if ! ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" "echo ok" &>/dev/null; then
+        log "WARN" "NAS not reachable via SSH"
         return 1
     fi
+    
+    # Verify /mnt/birdhouse is a mount point (not just a directory on root filesystem)
+    # This prevents writing to SD card if SSD is unmounted
+    if ! ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" "mountpoint -q /mnt/birdhouse" &>/dev/null; then
+        log "ERROR" "NAS SSD not mounted at /mnt/birdhouse - refusing to transfer"
+        log "ERROR" "Check if SSD is connected and mounted on NAS Pi"
+        return 1
+    fi
+    
+    return 0
 }
 
 create_remote_directory() {
@@ -251,9 +260,9 @@ main() {
     while [[ $attempt -le $MAX_RETRIES ]]; do
         log "INFO" "Transfer attempt ${attempt}/${MAX_RETRIES}"
         
-        # Check NAS is reachable
+        # Check NAS is reachable and SSD is mounted
         if ! check_nas_reachable; then
-            log "WARN" "NAS not reachable at ${NAS_HOST}"
+            log "WARN" "NAS check failed (see errors above)"
             if [[ $attempt -lt $MAX_RETRIES ]]; then
                 log "INFO" "Retrying in ${RETRY_DELAY} seconds..."
                 sleep $RETRY_DELAY
