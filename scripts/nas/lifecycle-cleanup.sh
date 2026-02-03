@@ -128,10 +128,10 @@ emergency_cleanup() {
         if [[ "$DRY_RUN" == true ]]; then
             log "DRY-RUN" "Would delete (emergency): $file"
         else
-            rm -f "$file"
+            rm -f -- "$file"
             # Also delete associated metadata file if it exists
             local json_file="${file%.*}.json"
-            [[ -f "$json_file" ]] && rm -f "$json_file"
+            [[ -f "$json_file" ]] && rm -f -- "$json_file"
             log "WARN" "Emergency deleted: $file"
         fi
         
