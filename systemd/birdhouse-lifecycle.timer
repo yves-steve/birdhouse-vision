@@ -30,8 +30,9 @@ OnCalendar=*-*-* 03:00:00
 # Add random delay up to 1 hour to spread load
 RandomizedDelaySec=1h
 
-# If the system was off when the timer should have triggered,
-# run it as soon as possible after boot
+# If the system was off when the timer should have triggered (e.g., missed
+# the 03:00 daily run), run it as soon as possible after boot.
+# Note: This does NOT trigger on every boot - only when a scheduled run was missed.
 Persistent=true
 
 [Install]
