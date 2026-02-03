@@ -23,4 +23,10 @@ jobs:
         run: sudo apt-get install -y shellcheck
 
       - name: Run ShellCheck
-        run: shellcheck $(git ls-files '*.sh' '*.bash' '*.zsh')
+        run: |
+          files="$(git ls-files '*.sh' '*.bash' '*.zsh')"
+          if [ -n "$files" ]; then
+            shellcheck $files
+          else
+            echo "No shell scripts to check."
+          fi
