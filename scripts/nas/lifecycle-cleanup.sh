@@ -166,10 +166,18 @@ main() {
         log "INFO" "*** DRY RUN MODE - No files will be deleted ***"
     fi
     
+    # Verify /mnt/birdhouse is a mountpoint (prevents operating on root filesystem)
+    if ! mountpoint -q /mnt/birdhouse; then
+        log "ERROR" "/mnt/birdhouse is not a mountpoint"
+        log "ERROR" "The SSD must be mounted before running this script"
+        log "ERROR" "Check 'mount | grep birdhouse' and verify /etc/fstab configuration"
+        exit 1
+    fi
+    
     # Check if captures directory exists
     if [[ ! -d "$CAPTURES_DIR" ]]; then
         log "ERROR" "Captures directory not found: ${CAPTURES_DIR}"
-        log "ERROR" "Is the SSD mounted?"
+        log "ERROR" "Directory structure may be incomplete"
         exit 1
     fi
     
