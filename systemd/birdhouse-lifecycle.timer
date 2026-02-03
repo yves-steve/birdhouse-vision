@@ -34,8 +34,5 @@ RandomizedDelaySec=1h
 # run it as soon as possible after boot
 Persistent=true
 
-# Wait 5 minutes after boot before running (let system stabilize)
-OnBootSec=5min
-
 [Install]
 WantedBy=timers.target
