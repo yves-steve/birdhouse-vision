@@ -28,7 +28,8 @@ NAS_BASE_PATH="/mnt/birdhouse/captures"
 LOG_FILE="/home/birdhouse/logs/transfer.log"
 
 # Transfer settings
-SSH_OPTIONS="-o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
+KNOWN_HOSTS_FILE="/home/birdhouse/.ssh/known_hosts_nas"
+SSH_OPTIONS="-o ConnectTimeout=10 -o StrictHostKeyChecking=yes -o UserKnownHostsFile=${KNOWN_HOSTS_FILE} -o BatchMode=yes"
 RSYNC_OPTIONS="-avz --timeout=30"
 
 # Retry settings
