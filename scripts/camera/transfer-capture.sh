@@ -112,16 +112,18 @@ verify_transfer() {
     local remote_path="$2"
     local filename
     filename=$(basename "$local_file")
-    
+
     # Get local file size
     local local_size
     local_size=$(stat -f%z "$local_file" 2>/dev/null || stat -c%s "$local_file" 2>/dev/null)
-    
+
     # Get remote file size
     local remote_size
+    local remote_file="${remote_path}/${filename}"
+    local remote_file_escaped
+    remote_file_escaped=$(printf '%q' "$remote_file")
     remote_size=$(ssh $SSH_OPTIONS "${NAS_USER}@${NAS_HOST}" \
-        "stat -f%z '${remote_path}/${filename}' 2>/dev/null || stat -c%s '${remote_path}/${filename}' 2>/dev/null")
-    
+        "stat -f%z $remote_file_escaped 2>/dev/null || stat -c%s $remote_file_escaped 2>/dev/null")
     if [[ "$local_size" == "$remote_size" ]]; then
         return 0
     else
