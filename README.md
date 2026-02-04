@@ -118,7 +118,6 @@ birdhouse-vision/
 ### Running Tests
 
 ```bash
-# Coming soon
 pytest tests/
 ```
 

@@ -1,0 +1,90 @@
+name: Shell Security Scan
+
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "0 3 * * 0" # Sundays at 03:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  shell-security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Discover shell targets and enforce shebang policy
+        id: discover
+        run: |
+          set -euo pipefail
+          tmp=$(mktemp)
+          # Known script locations
+          find scripts -type f -print 2>/dev/null >> "$tmp" || true
+          # Executable files anywhere (excluding .git)
+          find . -path './.git' -prune -o -type f -perm -111 -print >> "$tmp"
+          # Files declaring a shell shebang (bash or sh)
+          grep -RIl "^#!.*\\(bash\\|sh\\)" --exclude-dir .git . >> "$tmp" || true
+          sort -u "$tmp" > shell_targets.txt
+
+          echo "Discovered shell candidate files:"
+          cat shell_targets.txt
+
+          failures=0
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            first_line=$(head -n1 "$file" || true)
+            # Require a shebang on executables
+            if [ -x "$file" ] && ! printf '%s' "$first_line" | grep -q '^#!'; then
+              echo "::error file=$file::Executable is missing a shebang"; failures=1
+            fi
+            # Enforce portable bash shebang when bash is used
+            if printf '%s' "$first_line" | grep -q '^#!.*bash'; then
+              if ! printf '%s' "$first_line" | grep -q '^#!/usr/bin/env bash'; then
+                echo "::error file=$file::Use '#!/usr/bin/env bash' for bash scripts"; failures=1
+              fi
+            fi
+          done < shell_targets.txt
+
+          if [ "$failures" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck (fail on warnings)
+        run: |
+          set -euo pipefail
+          mapfile -t shell_files < <(while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            first=$(head -n1 "$file" || true)
+            if printf '%s' "$first" | grep -Eq '^#!.*(bash|sh)'; then
+              printf '%s\n' "$file"
+            elif printf '%s' "$file" | grep -qE '\\.sh$'; then
+              printf '%s\n' "$file"
+            fi
+          done < shell_targets.txt)
+
+          if [ "${#shell_files[@]}" -eq 0 ]; then
+            echo "No shell files to lint"
+            exit 0
+          fi
+
+          shellcheck -S warning "${shell_files[@]}"
+
+      - name: Install Semgrep
+        run: |
+          python -m pip install --upgrade pip
+          pip install "semgrep>=1.80.0,<2.0.0"
+
+      - name: Run Semgrep (bash security rules)
+        run: |
+          set -euo pipefail
+          if [ ! -s shell_targets.txt ]; then
+            echo "No files to scan"
+            exit 0
+          fi
+          semgrep --error --config p/bash --exclude-dir .git --file-list shell_targets.txt
