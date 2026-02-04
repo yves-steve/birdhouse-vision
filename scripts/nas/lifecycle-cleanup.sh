@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Birdhouse Vision - Data Lifecycle Cleanup Script
 # 
