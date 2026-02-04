@@ -90,4 +90,4 @@ jobs:
           semgrep --error --config p/bash \
             --exclude .git \
             --include 'scripts/**' \
-            scripts .
+            scripts
