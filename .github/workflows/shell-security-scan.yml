@@ -62,7 +62,7 @@ jobs:
             first=$(head -n1 "$file" || true)
             if printf '%s' "$first" | grep -Eq '^#!.*(bash|sh)'; then
               printf '%s\n' "$file"
-            elif printf '%s' "$file" | grep -qE '\\.sh$'; then
+            elif printf '%s' "$file" | grep -qE '\.sh$'; then
               printf '%s\n' "$file"
             fi
           done < shell_targets.txt)
