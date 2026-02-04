@@ -165,6 +165,20 @@ AWS Rekognition can identify most common bird species. Accuracy depends on image
 The Camera Module 3 has good low-light performance but no infrared. For night vision, you'd need to add IR LEDs and use the NoIR camera variant (a future enhancement).
 </details>
 
+## 🔒 Security
+
+This repository includes automated security scanning for shell scripts:
+
+- **ShellCheck Analysis**: All `.sh` and `.bash` files are checked for common issues and best practices
+- **Malicious Pattern Detection**: Scans for potentially dangerous patterns like:
+  - Remote code execution attempts
+  - Suspicious downloads and data exfiltration
+  - Credential theft patterns
+  - System modification commands
+  - Obfuscated or encoded commands
+
+The security workflow runs automatically on all pull requests. If you're contributing shell scripts, ensure they pass the security checks. False positives (like legitimate SSH usage) are expected and will be manually reviewed.
+
 ## 🤝 Contributing
 
 Contributions are welcome! Whether it's:
@@ -174,6 +188,8 @@ Contributions are welcome! Whether it's:
 - 🔧 Code contributions
 
 Please feel free to open an issue or submit a pull request.
+
+**Note**: All shell scripts (`.sh`, `.bash`) will be automatically scanned for security issues. The workflow may flag false positives - these are reviewed manually during the PR process.
 
 ## 📄 License
 
