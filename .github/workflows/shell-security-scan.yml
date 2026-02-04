@@ -1,0 +1,197 @@
+name: Shell Script Security Scan
+
+on:
+  pull_request:
+    branches: [ '**' ]
+    paths:
+      - '**.sh'
+      - '**.bash'
+      - '.github/workflows/shell-security-scan.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  scan-shell-scripts:
+    runs-on: ubuntu-latest
+    name: Scan Shell Scripts for Security Issues
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Find shell scripts
+      id: find-scripts
+      run: |
+        echo "Finding all shell scripts in the repository..."
+        find . -type f \( -name "*.sh" -o -name "*.bash" \) -not -path "./.git/*" > /tmp/scripts.txt
+        
+        if [ -s /tmp/scripts.txt ]; then
+          echo "found=true" >> $GITHUB_OUTPUT
+          echo "Found shell scripts:"
+          cat /tmp/scripts.txt
+        else
+          echo "found=false" >> $GITHUB_OUTPUT
+          echo "No shell scripts found"
+        fi
+    
+    - name: Install ShellCheck
+      if: steps.find-scripts.outputs.found == 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+    
+    - name: Run ShellCheck
+      if: steps.find-scripts.outputs.found == 'true'
+      id: shellcheck
+      continue-on-error: true
+      run: |
+        echo "Running ShellCheck on all scripts..."
+        shellcheck_failed=0
+        
+        while IFS= read -r script; do
+          echo "Checking: $script"
+          if ! shellcheck -f gcc "$script"; then
+            shellcheck_failed=1
+          fi
+        done < /tmp/scripts.txt
+        
+        if [ $shellcheck_failed -eq 1 ]; then
+          echo "status=failed" >> $GITHUB_OUTPUT
+          exit 1
+        else
+          echo "status=passed" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Scan for malicious patterns
+      if: steps.find-scripts.outputs.found == 'true'
+      id: malicious-scan
+      run: |
+        echo "Scanning for potentially malicious patterns..."
+        
+        # Create a security scan script
+        cat > /tmp/security_scan.sh << 'SCAN_SCRIPT'
+        #!/bin/bash
+        
+        # Patterns that could indicate malicious behavior
+        declare -A PATTERNS=(
+          ["Remote code execution"]="curl.*\|.*sh|wget.*\|.*sh|curl.*\|.*bash|wget.*\|.*bash"
+          ["Suspicious downloads"]="curl -s.*http|wget -q.*http|curl.*--silent.*http"
+          ["Base64 encoded commands"]="base64 -d.*\||echo.*base64 -d"
+          ["Credential theft"]="\.ssh|\.aws|password|secret|token|credential|private.*key"
+          ["Data exfiltration"]="nc -l|netcat.*-l|/dev/tcp/|curl.*-X POST.*http|wget.*--post"
+          ["System modification"]="rm -rf /|mkfs\.|dd if=.*of=/dev/|:(){:|:&};:"
+          ["Cron job manipulation"]="crontab -|/etc/cron|/var/spool/cron"
+          ["Persistence mechanisms"]="\.bashrc|\.bash_profile|\.profile|/etc/rc\.local"
+          ["Obfuscated commands"]="eval.*\$|exec.*\$|sh -c.*\$"
+          ["Suspicious URLs"]="http://[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+|[a-z0-9]+\.onion"
+        )
+        
+        exit_code=0
+        issues_found=0
+        
+        while IFS= read -r script; do
+          echo ""
+          echo "=== Scanning: $script ==="
+          
+          for pattern_name in "${!PATTERNS[@]}"; do
+            pattern="${PATTERNS[$pattern_name]}"
+            
+            # Search for the pattern in the script
+            matches=$(grep -n -E "$pattern" "$script" 2>/dev/null || true)
+            
+            if [ -n "$matches" ]; then
+              echo "⚠️  WARNING: Potential issue detected - $pattern_name"
+              echo "$matches" | while IFS= read -r match; do
+                echo "   Line: $match"
+              done
+              ((issues_found++))
+              exit_code=1
+            fi
+          done
+          
+          if [ $exit_code -eq 0 ]; then
+            echo "✅ No suspicious patterns detected in $script"
+          fi
+        done < /tmp/scripts.txt
+        
+        echo ""
+        if [ $issues_found -gt 0 ]; then
+          echo "===================="
+          echo "⚠️  SECURITY ALERT  ⚠️"
+          echo "===================="
+          echo "Found $issues_found potential security issue(s) in shell scripts."
+          echo "Please review the warnings above carefully."
+          echo ""
+          echo "Note: These are automated checks and may include false positives."
+          echo "Each warning should be manually reviewed to determine if it's legitimate or malicious."
+          exit 1
+        else
+          echo "===================="
+          echo "✅ Security Scan Passed"
+          echo "===================="
+          echo "No suspicious patterns detected in any shell scripts."
+          exit 0
+        fi
+        SCAN_SCRIPT
+        
+        chmod +x /tmp/security_scan.sh
+        /tmp/security_scan.sh
+    
+    - name: Comment PR with results
+      if: always() && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const shellcheck_status = '${{ steps.shellcheck.outcome }}';
+          const malicious_status = '${{ steps.malicious-scan.outcome }}';
+          const scripts_found = '${{ steps.find-scripts.outputs.found }}';
+          
+          let comment = '## 🔒 Shell Script Security Scan Results\n\n';
+          
+          if (scripts_found === 'false') {
+            comment += '✅ No shell scripts found in this PR.\n';
+          } else {
+            comment += '### ShellCheck Analysis\n';
+            if (shellcheck_status === 'success') {
+              comment += '✅ **Passed** - No ShellCheck issues found\n\n';
+            } else {
+              comment += '❌ **Failed** - ShellCheck found issues. See workflow logs for details.\n\n';
+            }
+            
+            comment += '### Malicious Pattern Detection\n';
+            if (malicious_status === 'success') {
+              comment += '✅ **Passed** - No suspicious patterns detected\n\n';
+            } else {
+              comment += '⚠️ **Warning** - Potentially malicious patterns detected. See workflow logs for details.\n\n';
+              comment += '**Action Required**: Please review the shell scripts carefully. The scanner detected patterns that could indicate:\n';
+              comment += '- Remote code execution attempts\n';
+              comment += '- Credential theft\n';
+              comment += '- Data exfiltration\n';
+              comment += '- System modification\n';
+              comment += '- Obfuscated commands\n\n';
+              comment += '⚠️ **Note**: These are automated checks and may include false positives. Each warning should be manually reviewed.\n';
+            }
+          }
+          
+          comment += '\n---\n';
+          comment += '*This automated security scan helps protect the repository from malicious scripts.*';
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+    
+    - name: Fail if security issues found
+      if: steps.malicious-scan.outcome == 'failure'
+      run: |
+        echo "Security scan detected potential malicious patterns in shell scripts."
+        echo "Please review the warnings and ensure all code is safe before merging."
+        exit 1
