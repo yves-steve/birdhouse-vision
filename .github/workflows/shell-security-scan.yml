@@ -87,4 +87,8 @@ jobs:
             echo "No files to scan"
             exit 0
           fi
-          semgrep --error --config p/bash --exclude-dir .git --file-list shell_targets.txt
+          # Semgrep does not support --file-list; use include/exclude with explicit targets
+          semgrep --error --config p/bash \
+            --exclude .git \
+            --include 'scripts/**' \
+            scripts .
