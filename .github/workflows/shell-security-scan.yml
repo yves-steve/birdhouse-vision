@@ -17,7 +17,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Discover shell targets and enforce shebang policy
-        id: discover
         run: |
           set -euo pipefail
           tmp=$(mktemp)
