@@ -58,7 +58,7 @@ I wanted to see what birds visit my garden birdhouse without disturbing them. Co
 | 🌧️ Weatherproof | IP67 enclosure survives Finnish winters |
 | 🤖 AI Species ID | AWS Rekognition identifies bird species (optional) |
 | 💾 Local NAS Storage | WiFi upload to home Pi 4 with 1TB SSD (~500k images) |
-| 💰 Low Running Cost | ~€10-20/year (NAS Pi 4 electricity, optional AWS)
+| 💰 Low Running Cost | ~€10-20/year (NAS Pi 4 electricity, optional AWS) |
 
 ## 🚀 Quick Start
 
