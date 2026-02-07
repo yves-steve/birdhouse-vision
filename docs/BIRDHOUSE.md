@@ -36,7 +36,7 @@ Ready-made birdhouses suitable for camera installation:
 
 When buying a birdhouse for camera installation:
 
-- ✅ **Interior space**: Minimum 15×15×25cm for camera module + Pi enclosure + battery
+- ✅ **Interior space**: Minimum 18–20cm width/depth and 35–40cm height for camera module + Pi enclosure + battery
 - ✅ **Access panel**: Rear or side opening for maintenance
 - ✅ **Entrance hole**: Size determines which birds visit (see [Species Guide](#entrance-hole-sizes))
 - ✅ **Wood thickness**: ≥13mm for insulation (Finnish winters!)
