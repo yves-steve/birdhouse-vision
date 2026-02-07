@@ -12,7 +12,7 @@ Complete hardware list with Finnish suppliers (February 2026).
 | **Raspberry Pi Zero 2 W H** | 1GHz quad-core, WiFi, pre-soldered header | Verkkokauppa / Partco | €19.90 | ✅ In Stock |
 | **Camera Module 3 NoIR** | 12MP, no IR filter (night vision) | Verkkokauppa | €30.90 | ✅ In Stock |
 | **Camera Cable (15cm)** | Pi Zero compatible | Verkkokauppa | €4.90 | ✅ In Stock |
-| **PIR Motion Sensor** | HC-SR501, 3.3V | Partco.fi | €7.50 | ✅ Available |
+| **PIR Motion Sensor** | HC-SR501, 5V (OUT: 3.3V compatible) | Partco.fi | €7.50 | ✅ Available |
 | **IR LED Spotlight** | 850nm, 12V 3W | Partco.fi / Electro:Kit | €15-18 | ✅ Available |
 | **Relay Module** | 1-channel, 3.3V-compatible trigger | Partco.fi / Electro:Kit | €5.90 | ✅ Available |
 | **MicroSD Card** | Kingston 32GB | Verkkokauppa | €9.90 | ✅ In Stock |
@@ -24,7 +24,7 @@ Complete hardware list with Finnish suppliers (February 2026).
 
 **Component Notes:**
 - **NoIR Camera**: "No Infrared filter" - removes the IR-blocking filter found in normal cameras. Allows the camera to see infrared light from IR LEDs for night vision (images appear black & white at night).
-- **PIR Motion Sensor**: Passive Infrared sensor. Detects motion by sensing changes in infrared radiation (body heat). Triggers camera and IR LEDs when birds approach.
+- **PIR Motion Sensor**: Passive Infrared sensor. Detects motion by sensing changes in infrared radiation (body heat). Triggers camera and IR LEDs when birds approach. **IMPORTANT**: HC-SR501 requires 5V power (VCC to Pin 2). The OUT signal is 3.3V compatible and safe to connect directly to GPIO pins.
 - **IR LED Spotlight**: Infrared light emitting diode. Emits 850nm wavelength light (invisible to birds and humans) that illuminates the scene for the NoIR camera at night.
 - **Relay Module**: Electronic switch that lets the Pi's low-voltage GPIO (3.3V logic) control high-voltage devices (12V IR LEDs). **IMPORTANT**: Raspberry Pi GPIO pins are 3.3V logic and are NOT 5V tolerant. Ensure your relay module has a 3.3V-compatible trigger input, or use a proper level shifter/transistor driver circuit to avoid damaging the Pi.
 - **IP67 Weatherproof Case**: Ingress Protection rating 67 = dust-tight and protected against water immersion up to 1 meter for 30 minutes. Essential for outdoor use.
