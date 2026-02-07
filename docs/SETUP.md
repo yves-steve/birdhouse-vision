@@ -61,8 +61,8 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
                     │                          │
                     │ GPIO Header (40-pin)     │
                     │ ┌──────────────────────┐ │
-    PIR Sensor ─────┤ Pin 1 (3.3V)           │─┤
-    VCC         ┌───┤ Pin 6 (GND)            │ │
+    PIR Sensor ─────┤ Pin 2 (5V)             │─┤── VCC
+    VCC         ┌───┤ Pin 6 (GND)            │ │── GND
     GND         │   │ Pin 7 (GPIO4) ◄───OUT  │ │
     OUT         │   │ Pin 11 (GPIO17) ─► IN1 │ │
                 │   │ Pin 2 (5V)             │─┤─ Relay VCC
@@ -78,6 +78,11 @@ Relay Output:
   NO  ──► 12V IR LED Array (+)
   IR LED (−) ──► 12V Battery (−)
 ```
+
+**⚠️ PIR Sensor Voltage Note:**
+- HC-SR501 PIR sensor requires **5V power** (VCC to Pin 2, not Pin 1)
+- OUT signal is 3.3V compatible and safe for GPIO4 input
+- Do NOT power from 3.3V - this is below the HC-SR501's minimum operating voltage (4.5-20V)
 
 ### Power System Connections
 
