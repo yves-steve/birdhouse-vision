@@ -14,7 +14,7 @@ Complete hardware list with Finnish suppliers (February 2026).
 | **Camera Cable (15cm)** | Pi Zero compatible | Verkkokauppa | €4.90 | ✅ In Stock |
 | **PIR Motion Sensor** | HC-SR501, 3.3V | Partco.fi | €7.50 | ✅ Available |
 | **IR LED Spotlight** | 850nm, 12V 3W | Partco.fi / Electro:Kit | €15-18 | ✅ Available |
-| **Relay Module** | 1-channel, 5V trigger | Partco.fi / Electro:Kit | €5.90 | ✅ Available |
+| **Relay Module** | 1-channel, 3.3V-compatible trigger | Partco.fi / Electro:Kit | €5.90 | ✅ Available |
 | **MicroSD Card** | Kingston 32GB | Verkkokauppa | €9.90 | ✅ In Stock |
 | **IP67 Weatherproof Case** | Junction box ~160×120×80mm | Partco.fi / Biltema | €12-15 | ✅ Available |
 | **Cable Glands** | M12/M16, IP67 | Partco.fi / Biltema | €8-10 | ✅ Available |
@@ -26,7 +26,7 @@ Complete hardware list with Finnish suppliers (February 2026).
 - **NoIR Camera**: "No Infrared filter" - removes the IR-blocking filter found in normal cameras. Allows the camera to see infrared light from IR LEDs for night vision (images appear black & white at night).
 - **PIR Motion Sensor**: Passive Infrared sensor. Detects motion by sensing changes in infrared radiation (body heat). Triggers camera and IR LEDs when birds approach.
 - **IR LED Spotlight**: Infrared light emitting diode. Emits 850nm wavelength light (invisible to birds and humans) that illuminates the scene for the NoIR camera at night.
-- **Relay Module**: Electronic switch that lets the Pi's low-voltage GPIO (5V) control high-voltage devices (12V IR LEDs). Protects the Pi from electrical damage.
+- **Relay Module**: Electronic switch that lets the Pi's low-voltage GPIO (3.3V logic) control high-voltage devices (12V IR LEDs). Must be 3.3V-compatible or include level shifting. Protects the Pi from electrical damage.
 - **IP67 Weatherproof Case**: Ingress Protection rating 67 = dust-tight and protected against water immersion up to 1 meter for 30 minutes. Essential for outdoor use.
 - **Cable Glands**: Waterproof cable entry points for the weatherproof case. Seal around wires to maintain IP67 rating.
 - **Jumper Wires**: Pre-crimped wires for connecting PIR sensor and relay to Pi's GPIO header pins. No soldering required.
