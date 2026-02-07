@@ -97,8 +97,8 @@ Relay Output:
              │ (to load)
              ↓
          ┌────────────┐
-         │ Buck Conv. │ 12V → 5V 2.5A
-         │ 12V-5V 3A  │
+         │ Buck Conv. │ 12V → 5V
+         │ 3A module, sized for 2.5A load │
          └────────────┘
              │ USB-C
              ↓
