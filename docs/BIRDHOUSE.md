@@ -36,12 +36,13 @@ Ready-made birdhouses suitable for camera installation:
 
 When buying a birdhouse for camera installation:
 
-- ✅ **Interior space**: Minimum 15×15×25cm for camera module + Pi enclosure
-- ✅ **Access panel**: Rear or side opening for maintenance and cable routing
+- ✅ **Interior space**: Minimum 18–20cm width/depth and 35–40cm height for camera module + Pi enclosure + battery
+- ✅ **Access panel**: Rear or side opening for maintenance
 - ✅ **Entrance hole**: Size determines which birds visit (see [Species Guide](#entrance-hole-sizes))
 - ✅ **Wood thickness**: ≥13mm for insulation (Finnish winters!)
 - ✅ **Drainage**: Small holes in floor to prevent water accumulation
 - ✅ **Untreated interior**: No paint/varnish inside (toxic to birds)
+- ✅ **Roof mounting space**: For optional solar panel attachment
 
 ### Entrance Hole Sizes
 
@@ -102,7 +103,7 @@ If you prefer English instructions:
 
 ### Recommended DIY Dimensions
 
-For a camera-ready birdhouse compatible with this project:
+For a WiFi camera-ready birdhouse compatible with this project:
 
 ```
         ┌────────────────────┐
@@ -111,16 +112,21 @@ For a camera-ready birdhouse compatible with this project:
         └────────────────────┘
                  │
         ┌────────▼───────────┐
-        │                    │  ← 30-35cm height (interior)
+        │                    │  ← 35-40cm height (interior)
         │   ┌──────────┐     │
         │   │  Camera  │     │  ← Mount camera near roof,
         │   │  Module  │     │    angled down at entrance
+        │   │  (NoIR)  │     │
         │   └──────────┘     │
         │                    │
         │       ○            │  ← Entrance hole (species-specific)
         │                    │
         │   [ Nest area ]    │  ← 15×15cm minimum floor space
         │                    │
+        │   ┌──────────┐     │
+        │   │ Battery  │     │  ← 12V battery at bottom (heavy)
+        │   │ 12V 10Ah │     │
+        │   └──────────┘     │
         └────────┬───────────┘
                  │
         ┌────────▼───────────┐
@@ -128,28 +134,38 @@ For a camera-ready birdhouse compatible with this project:
         │    (3-4 × 6mm)     │
         └────────────────────┘
         
-Interior width:  15-18cm
-Interior depth:  15-18cm
-Interior height: 30-35cm
+Interior width:  18-20cm (for battery)
+Interior depth:  18-20cm
+Interior height: 35-40cm (battery + camera)
 Wall thickness:  15-20mm (untreated wood)
 ```
 
-### Cable Routing
+### Battery & Electronics Mounting
 
-Plan for the PoE cable before building:
+Plan for battery and weatherproof enclosure placement:
 
 ```
         ┌─────────────────────────┐
         │         Roof            │
-        │                    ●────┼──── Cable entry (rear, top)
-        └─────────────────────────┘     Sealed with silicone
+        │    (Optional: Solar)    │
+        └─────────────────────────┘
         │                         │
         │    Camera + Pi mount    │
         │    ┌───────────────┐    │
-        │    │ Weatherproof  │    │
-        │    │   enclosure   │────┼──── Cable runs down inside
-        │    └───────────────┘    │     wall (hidden)
+        │    │ Weatherproof  │    │  ← Top section
+        │    │  case with:   │    │
+        │    │  - Pi Zero    │    │
+        │    │  - NoIR cam   │    │
+        │    │  - PIR sensor │    │
+        │    │  - Relay      │    │
+        │    └───────────────┘    │
         │                         │
+        │    ┌───────────────┐    │
+        │    │   Battery     │    │  ← Bottom (keep low)
+        │    │   12V 10Ah    │    │
+        │    └───────────────┘    │
+        │                         │
+        └─────────────────────────┘
 ```
 
 ---
@@ -158,16 +174,18 @@ Plan for the PoE cable before building:
 
 ### Minimum Interior Dimensions
 
-To fit the Raspberry Pi + Camera Module 3 + weatherproof enclosure:
+To fit the Raspberry Pi Zero + Camera Module 3 NoIR + battery + weatherproof enclosure:
 
 | Component | Dimensions | Notes |
 |-----------|------------|-------|
-| Pi Camera Module 3 | 25×24×11.5mm | Sensor only |
-| Camera + ribbon cable | ~100mm usable reach inside box | Standard 15cm cable (overall length) recommended |
-| Weatherproof Pi enclosure | ~90×60×30mm | Varies by model |
-| **Total camera assembly** | ~120×70×50mm | Allow extra clearance |
+| Pi Zero 2 W | 65×30×5mm | Compact board |
+| Camera Module 3 NoIR | 25×24×11.5mm | Sensor only |
+| Camera + ribbon cable | ~100mm usable reach | 15cm cable recommended |
+| Weatherproof case | ~160×120×80mm | For Pi + PIR + relay |
+| 12V 10Ah battery | ~150×65×95mm | Varies by model |
+| **Total assembly** | ~180×150×100mm | Allow extra clearance |
 
-**Recommendation**: Interior width/depth of at least **15cm** to fit camera assembly without blocking the nest area.
+**Recommendation**: Interior width/depth of at least **18-20cm** to fit camera assembly + battery without blocking the nest area.
 
 ### Access Panel Considerations
 
@@ -175,8 +193,8 @@ Your birdhouse needs easy access for:
 
 1. **Annual cleaning** (remove old nests after breeding season)
 2. **Camera maintenance** (adjust angle, clean lens)
-3. **Cable routing** (PoE cable entry point)
-4. **SD card access** (if not using network storage)
+3. **Battery swaps** (if not using solar) or solar panel inspection
+4. **SD card access** (if not using WiFi upload)
 
 **Best design**: Hinged or removable roof/side panel with weather seal.
 
@@ -227,7 +245,7 @@ For building materials (wood, screws, hinges):
 | Plywood (exterior) | Vaneri (ulkokäyttö) | For roof, at least 12mm |
 | Galvanized screws | Sinkityt ruuvit | Rust-resistant |
 | Brass hinges | Messinki saranat | For access panel |
-| Silicone sealant | Silikoni tiiviste | For cable entry waterproofing |
+| Silicone sealant | Silikoni tiiviste | For weatherproofing joints |
 
 ### Wood Treatment
 

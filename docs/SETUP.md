@@ -5,102 +5,121 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
 ## System Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         BIRDHOUSE VISION SYSTEM                         │
-└─────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                    BIRDHOUSE VISION SYSTEM (WiFi)                   │
+└─────────────────────────────────────────────────────────────────────┘
 
-    🏡 OUTDOOR (Birdhouse)              🏠 HOME (Indoor)            ☁️  CLOUD
-    ┌──────────────────┐                ┌──────────────┐          ┌──────────┐
-    │  Camera Pi       │   Cat6 Cable   │   NAS Pi     │  WiFi    │   AWS    │
-    │  (Pi 4 8GB)      │◄──────────────►│  (Pi 4 4GB)  │◄────────►│Rekognition│
-    │                  │   PoE Power    │              │          │          │
-    │  - Camera Module │                │  - 1TB SSD   │          └──────────┘
-    │  - PIR Sensor    │                │  - Storage   │
-    │  - PoE+ HAT      │                │  - Processing│
-    │  - Weatherproof  │                └──────────────┘
-    └──────────────────┘
-         │
-         │ Motion Detected
-         ▼
-    🐦 Bird Activity
-       Captured & Stored
+    🏡 OUTDOOR (Birdhouse)                   🏠 HOME (Indoor)
+    ┌──────────────────┐                     ┌────────────────┐
+    │  Camera Pi       │       WiFi (15m)    │  Home Router   │
+    │  (Pi Zero 2 W)   │◄────────────────────►│  192.168.1.1   │
+    │                  │                     └────────┬───────┘
+    │  - NoIR Camera   │                              │ Ethernet
+    │  - PIR Sensor    │                              ▼
+    │  - IR LEDs       │         🌞 Solar            ┌────────────────┐
+    │  - Relay Module  │            Panel (50W)      │  NAS Pi 4      │
+    └──────────────────┘            Battery          │  (8GB RAM)     │
+         │                          (12V 10Ah)       │  💾 1TB SSD    │
+         │ Solar Cables              MPPT Controller │                │
+         ▼                           Buck Converter  │  (Local storage│
+    🔋 Extended Battery              (12V→5V)        │   before cloud)│
+       (4-7 days autonomy)                           └────────────────┘
 ```
 
-### Data Flow
+### Data Flow (Motion-Activated)
 
 ```
-1. PIR Sensor → Detects Motion
+1. PIR Sensor → Detects motion (GPIO4 signal)
          ↓
-2. Camera Module → Captures Image (1080p)
+2. Python script → Reads GPIO HIGH
          ↓
-3. Camera Pi → Saves Locally (microSD)
+3. GPIO17 → Triggers relay
          ↓
-4. Network Transfer → Sends to NAS Pi (via PoE Ethernet)
+4. IR LEDs → Turn ON (12V from battery)
          ↓
-5. NAS Pi → Stores on 1TB SSD
+5. Camera Module → Captures image (NoIR, 12MP)
          ↓
-6. AWS Rekognition → Identifies Bird Species
+6. Pi Zero → Saves locally (microSD backup)
          ↓
-7. Results → Stored & Available for Review
+7. WiFi upload → Sends to home NAS Pi 4
+         ↓
+8. NAS Pi 4 → Stores on 1TB SSD (local storage)
+         ↓
+9. (Optional) → Cloud upload to AWS S3/Rekognition
+         ↓
+10. After 10s → Relay OFF, LEDs powerdown
 ```
 
-### Hardware Connections - Camera Pi
+### Hardware Connections - Camera Pi (Pi Zero 2 W H)
 
 ```
-                    ┌─────────────────────────────┐
-                    │   Raspberry Pi 4 (8GB)      │
-                    │                             │
-    Camera ─────────┤ CSI Port                    │
-    Module 3        │                             │
-                    │                 GPIO Pins   │──── PIR Motion
-                    │                             │     Sensor (3 pins)
-                    │                             │
-                    │                 Ethernet    │──── Cat6 Cable
-    PoE+ HAT ───────┤ 40-pin Header   Port (PoE)  │     (Data + Power)
-    (sits on top)   │                             │
-                    │                             │
-                    │ microSD Slot                │──── 32GB microSD
-                    └─────────────────────────────┘
-                             (All enclosed in weatherproof enclosure)
+                    ┌──────────────────────────┐
+                    │ Pi Zero 2 W (with header)│
+                    │                          │
+    NoIR Camera ────┤ CSI Port (ribbon cable)  │
+    Module 3        │                          │
+                    │                          │
+                    │ GPIO Header (40-pin)     │
+                    │ ┌──────────────────────┐ │
+    PIR Sensor ─────┤ Pin 2 (5V)             │─┤── VCC
+    VCC         ┌───┤ Pin 6 (GND)            │ │── GND
+    GND         │   │ Pin 7 (GPIO4) ◄───OUT  │ │
+    OUT         │   │ Pin 11 (GPIO17) ─► IN1 │ │
+                │   │ Pin 2 (5V)             │─┤─ Relay VCC
+    Relay       │   │ Pin 9 (GND)            │─┤─ Relay GND
+    Module ─────┘   │                        │ │
+                    │                        │ │
+                    │ microSD Slot           │─┤─ microSD Card
+                    └──────────────────────────┘
+                    (All in weatherproof case)
+
+Relay Output:
+  COM ──► 12V Battery (+)
+  NO  ──► 12V IR LED Array (+)
+  IR LED (−) ──► 12V Battery (−)
 ```
 
-### Hardware Connections - NAS Pi
+**⚠️ PIR Sensor Voltage Note:**
+- HC-SR501 PIR sensor requires **5V power** (VCC to Pin 2, not Pin 1)
+- OUT signal is 3.3V compatible and safe for GPIO4 input
+- Do NOT power from 3.3V - this is below the HC-SR501's minimum operating voltage (4.5-20V)
+
+### Power System Connections
 
 ```
-                    ┌─────────────────────────────┐
-                    │   Raspberry Pi 4 (4GB)      │
-                    │                             │
-                    │                             │
-    USB-C ──────────┤ USB-C Port    USB 3.0 Ports │──── Samsung T7
-    Power (15W)     │                             │     1TB SSD
-                    │                             │
-                    │                 Ethernet    │──── Home Network
-                    │                 Port        │     (Router)
-                    │                             │
-                    │                             │
-                    │ microSD Slot                │──── 32GB microSD
-                    └─────────────────────────────┘
-                             (Standard case, indoor placement)
+        ☀️ 50W Solar Panel
+             │ (MC4)
+             ↓
+         ┌────────────┐
+         │ MPPT 10A   │◄─── Battery (12V 10Ah)
+         │ Controller │     (charging current)
+         └────────────┘
+             │ (to load)
+             ↓
+         ┌────────────┐
+         │ Buck Conv. │ 12V → 5V
+         │ 3A module, sized for 2.5A load │
+         └────────────┘
+             │ USB-C
+             ↓
+        Pi Zero 2 W
+        Power Input
 ```
 
-### Network Topology
+### Network Topology (WiFi)
 
 ```
-                        Home Router/Switch
-                        (192.168.1.1)
-                               │
-                ┌──────────────┼──────────────┐
-                │              │              │
-                │              │              │
-        PoE Injector    NAS Pi (WiFi)   MacBook Pro
-        (Ethernet)      192.168.1.100   (WiFi/Setup)
-                │
-                │ Cat6 (50m)
-                │ PoE Power
-                │
-         Camera Pi (PoE)
-         192.168.1.101
-         (birdhouse-camera.local)
+                    🌐 Home Router
+                    192.168.1.1
+                    (2.4 GHz WiFi)
+                         │
+            ┌────────────┼────────────┐
+            │            │            │
+        Camera Pi     NAS Pi 4      MacBook
+        (WiFi)       (Ethernet)     (WiFi)
+    192.168.1.101  192.168.1.100
+    (Pi Zero 2 W)  (8GB + 1TB SSD)
+     └──WiFi───────► stores images locally
 ```
 
 ## Table of Contents
@@ -117,16 +136,18 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
 Before you begin, ensure you have received:
 
 ### Camera Unit (Birdhouse)
-- ✅ Raspberry Pi 4 Model B 8GB
-- ✅ Camera Module 3
+- ✅ Raspberry Pi Zero 2 W H (with GPIO header)
+- ✅ Camera Module 3 NoIR
 - ✅ Kingston 32GB microSD card
-- ✅ PoE+ HAT
-- ✅ PIR Motion Sensor
+- ✅ PIR Motion Sensor (HC-SR501)
+- ✅ Relay Module (1-channel)
+- ✅ IR LED Spotlight (850nm, 12V)
 
 ### NAS Unit (Home)
-- ✅ Raspberry Pi 4 Model B 4GB
+- ✅ Raspberry Pi 4 Model B (8GB)
 - ✅ Kingston 32GB microSD card
-- ✅ Samsung T7 Shield 1TB SSD
+- ✅ Kingston NV2 1TB SSD
+- ✅ Axagon EEM2-UG2 USB 3.0 to NVMe adapter
 
 ### Tools
 - ✅ MacBook Pro (for flashing OS)
@@ -418,7 +439,7 @@ Coming soon...
 
 ### NAS Pi Setup
 
-This section covers configuring the Samsung T7 SSD, installing Samba for network access, and setting up the data lifecycle management.
+This section covers configuring the Kingston NV2 SSD (via Axagon USB 3.0 adapter), installing Samba for network access, and setting up the data lifecycle management.
 
 #### Data Lifecycle Overview
 
@@ -465,9 +486,9 @@ Before diving into configuration, understand how data flows through the system:
    • PRIORITY:  Disk space check runs FIRST (prevents full disk)
 ```
 
-#### Step 1: Connect and Identify the Samsung T7 SSD
+#### Step 1: Connect and Identify the Kingston NV2 SSD
 
-1. **Connect the SSD** to a USB 3.0 port (blue port) on the NAS Pi
+1. **Connect the Kingston NV2 SSD** via Axagon EEM2-UG2 adapter to a USB 3.0 port (blue port) on the NAS Pi
 
 2. **SSH into the NAS Pi**:
    ```bash
@@ -487,7 +508,7 @@ Before diving into configuration, understand how data flows through the system:
    # ├─mmcblk0p1 179:1    0   512M  0 part /boot/firmware
    # └─mmcblk0p2 179:2    0  29.2G  0 part /
    
-   # Verify it's the Samsung T7 (should show ~1TB)
+   # Verify it's the Kingston NV2 (should show ~1TB)
    sudo fdisk -l /dev/sda
    ```
 
@@ -1047,8 +1068,8 @@ Raspberry Pi OS Bookworm uses **NetworkManager** instead of `wpa_supplicant`. If
 ## Next Steps
 
 Once both Pis are running:
-1. ✅ Camera Pi: Test camera module
-2. ✅ NAS Pi: Connect Samsung T7 SSD
+1. ✅ Camera Pi: Test PIR sensor and camera module
+2. ✅ NAS Pi: Connect Kingston NV2 SSD via Axagon adapter
 3. ✅ Install project code (see [README.md](../README.md))
-4. ✅ Configure networking for PoE
+4. ✅ Configure WiFi networking (camera Pi to home router)
 5. ✅ Deploy to birdhouse enclosure
