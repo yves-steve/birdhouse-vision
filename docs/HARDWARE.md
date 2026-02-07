@@ -50,16 +50,37 @@ Complete hardware list with Finnish suppliers (February 2026).
 - **Buck Converter**: Voltage step-down converter. Converts 12V battery power to 5V USB-C for powering the Raspberry Pi Zero. More efficient than linear regulators (less heat waste).
 - **MC4 Connectors**: Industry-standard weatherproof solar panel connectors. Snap-lock design, IP67 rated, UV resistant. Used to connect solar panel to MPPT controller.
 
+### Home Storage (NAS at Router)
+
+| Component | Specification | Supplier | Price | Status |
+|-----------|--------------|----------|-------|--------|
+| **Raspberry Pi 4 Model B (8GB)** | Home NAS server | Verkkokauppa | €90.92 | ✅ In Stock |
+| **USB-C Power Supply** | Official Pi PSU, 5V 3A | Verkkokauppa | €9.90 | ✅ In Stock |
+| **1TB NVMe SSD** | Samsung 980 | Verkkokauppa | €79.90 | ✅ In Stock |
+| **USB 3.0 to NVMe Adapter** | UGREEN enclosure | Amazon.fi | €20.00 | ✅ Available |
+| **MicroSD Card** | Kingston 32GB (boot) | Verkkokauppa | €9.90 | ✅ In Stock |
+| **Cooling** | Passive aluminum case | Verkkokauppa | €12.90 | ✅ In Stock |
+
+**Subtotal Home NAS: ~€223**
+
+**Component Notes:**
+- **Pi 4 Model B (8GB)**: More powerful Pi model for running file server (NAS = Network Attached Storage). Receives images over WiFi from camera Pi, stores locally before optional cloud upload.
+- **NVMe SSD**: Non-Volatile Memory Express solid-state drive. Much faster than SD cards or USB flash drives (2000+ MB/s read/write). Stores 1TB = ~500,000 bird images.
+- **USB 3.0 Adapter**: Connects NVMe SSD to Pi 4's USB port. USB 3.0 provides 5Gbps transfer speed (vs 480Mbps on USB 2.0).
+
 ## Total Project Cost
 
 | Category | Cost |
 |----------|------|
 | **Camera Unit (WiFi + Night Vision)** | **€118-130** |
 | **Power System (Solar)** | **€158** |
-| **Hardware Total (Minimal)** | **€276-313** |
+| **Home NAS (Optional)** | **€223** |
+| **Hardware Total (Complete System)** | **€499-511** |
+| **Hardware Total (Camera Only)** | **€276-313** |
 | **Recurring (Annual):** | |
-| Electricity (solar, minimal) | €0-5 |
-| **Annual Cost** | **€0-5** |
+| Electricity (Pi 4 NAS at home) | €10-15 |
+| Electricity (solar camera) | €0-5 |
+| **Annual Cost** | **€10-20** |
 
 ---
 

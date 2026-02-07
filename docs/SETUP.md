@@ -13,17 +13,17 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
     ┌──────────────────┐                     ┌────────────────┐
     │  Camera Pi       │       WiFi (15m)    │  Home Router   │
     │  (Pi Zero 2 W)   │◄────────────────────►│  192.168.1.1   │
-    │                  │                     └────────────────┘
-    │  - NoIR Camera   │
-    │  - PIR Sensor    │
-    │  - IR LEDs       │         🌞 Solar Panel (50W)
-    │  - Relay Module  │         Battery (12V 10Ah)
-    └──────────────────┘         MPPT Controller
-         │                       Buck Converter (12V→5V)
-         │ Solar Cables
-         ▼
-    🔋 Extended Battery
-       (4-7 days autonomy)
+    │                  │                     └────────┬───────┘
+    │  - NoIR Camera   │                              │ Ethernet
+    │  - PIR Sensor    │                              ▼
+    │  - IR LEDs       │         🌞 Solar            ┌────────────────┐
+    │  - Relay Module  │            Panel (50W)      │  NAS Pi 4      │
+    └──────────────────┘            Battery          │  (8GB RAM)     │
+         │                          (12V 10Ah)       │  💾 1TB SSD    │
+         │ Solar Cables              MPPT Controller │                │
+         ▼                           Buck Converter  │  (Local storage│
+    🔋 Extended Battery              (12V→5V)        │   before cloud)│
+       (4-7 days autonomy)                           └────────────────┘
 ```
 
 ### Data Flow (Motion-Activated)
@@ -39,11 +39,15 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
          ↓
 5. Camera Module → Captures image (NoIR, 12MP)
          ↓
-6. Pi Zero → Saves locally (microSD)
+6. Pi Zero → Saves locally (microSD backup)
          ↓
-7. WiFi upload → Sends to NAS or cloud (optional)
+7. WiFi upload → Sends to home NAS Pi 4
          ↓
-8. After 10s → Relay OFF, LEDs powerdown
+8. NAS Pi 4 → Stores on 1TB SSD (local storage)
+         ↓
+9. (Optional) → Cloud upload to AWS S3/Rekognition
+         ↓
+10. After 10s → Relay OFF, LEDs powerdown
 ```
 
 ### Hardware Connections - Camera Pi (Pi Zero 2 W H)
@@ -106,9 +110,11 @@ Relay Output:
                          │
             ┌────────────┼────────────┐
             │            │            │
-        Camera Pi    NAS Pi (opt)   MacBook
-        (WiFi)      (WiFi/LAN)     (WiFi)
+        Camera Pi     NAS Pi 4      MacBook
+        (WiFi)       (Ethernet)     (WiFi)
     192.168.1.101  192.168.1.100
+    (Pi Zero 2 W)  (8GB + 1TB SSD)
+     └──WiFi───────► stores images locally
 ```
 
 ## Table of Contents
