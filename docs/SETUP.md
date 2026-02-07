@@ -64,10 +64,10 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
     PIR Sensor ─────┤ Pin 1 (3.3V)           │─┤
     VCC         ┌───┤ Pin 6 (GND)            │ │
     GND         │   │ Pin 7 (GPIO4) ◄───OUT  │ │
-    OUT         │   │ Pin 11 (GPIO17) ◄─ IN1 │ │
+    OUT         │   │ Pin 11 (GPIO17) ─► IN1 │ │
                 │   │ Pin 2 (5V)             │─┤─ Relay VCC
     Relay       │   │ Pin 9 (GND)            │─┤─ Relay GND
-    Module ─────┘   │ Pin 11 (GPIO17) ─► IN1 │ │
+    Module ─────┘   │                        │ │
                     │                        │ │
                     │ microSD Slot           │─┤─ microSD Card
                     └──────────────────────────┘
