@@ -74,9 +74,9 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
                     (All in weatherproof case)
 
 Relay Output:
-  NO ──► 12V IR LED Array
-  COM ──► 12V Battery (-)
-  IR LED (-) ──► Battery (-)
+  COM ──► 12V Battery (+)
+  NO  ──► 12V IR LED Array (+)
+  IR LED (−) ──► 12V Battery (−)
 ```
 
 ### Power System Connections
