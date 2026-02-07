@@ -83,7 +83,7 @@ python src/capture/camera.py
 | [SETUP.md](docs/SETUP.md) | Complete setup guide: OS flashing, WiFi config, GPIO wiring |
 | [HARDWARE.md](docs/HARDWARE.md) | Complete BOM with Finnish supplier links, component explanations |
 | [BIRDHOUSE.md](docs/BIRDHOUSE.md) | Physical birdhouse options, DIY guides, battery placement |
-| [COSTS.md](docs/COSTS.md) | Budget tracking (~€280-310 total) |
+| [COSTS.md](docs/COSTS.md) | Budget tracking (itemized costs, see file for totals) |
 | [WIFI_VS_ETHERNET.md](docs/WIFI_VS_ETHERNET.md) | WiFi deployment guide (15m range, signal analysis) |
 
 ## 🗺️ Roadmap
