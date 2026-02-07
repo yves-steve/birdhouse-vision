@@ -56,8 +56,8 @@ Complete hardware list with Finnish suppliers (February 2026).
 |-----------|--------------|----------|-------|--------|
 | **Raspberry Pi 4 Model B (8GB)** | Home NAS server | Verkkokauppa | €90.92 | ✅ In Stock |
 | **USB-C Power Supply** | Official Pi PSU, 5V 3A | Verkkokauppa | €9.90 | ✅ In Stock |
-| **1TB NVMe SSD** | Samsung 980 | Verkkokauppa | €79.90 | ✅ In Stock |
-| **USB 3.0 to NVMe Adapter** | UGREEN enclosure | Amazon.fi | €20.00 | ✅ Available |
+| **1TB NVMe SSD** | Kingston NV2 | Jimms.fi | €79.90 | ✅ In Stock |
+| **USB 3.0 to NVMe Adapter** | Axagon EEM2-UG2 | Jimms.fi | €20.00 | ✅ Available |
 | **MicroSD Card** | Kingston 32GB (boot) | Verkkokauppa | €9.90 | ✅ In Stock |
 | **Cooling** | Passive aluminum case | Verkkokauppa | €12.90 | ✅ In Stock |
 
@@ -91,6 +91,12 @@ Complete hardware list with Finnish suppliers (February 2026).
 - Free shipping €100+
 - Location: Tammiston kauppatie 7, Vantaa
 - **Recommended for:** Pi Zero, NoIR camera, microSD
+
+### 🇫🇮 Jimms.fi
+- Computer parts & electronics specialist
+- Free shipping €150+
+- Location: Kuopio (online nationwide)
+- **Recommended for:** NVMe SSDs, USB adapters, PC components
 
 ### 🇫🇮 Partco.fi (Helsinki)
 - Electronics components specialist
