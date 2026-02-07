@@ -5,102 +5,110 @@ Complete step-by-step guide to set up your birdhouse camera system from scratch.
 ## System Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         BIRDHOUSE VISION SYSTEM                         │
-└─────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                    BIRDHOUSE VISION SYSTEM (WiFi)                   │
+└─────────────────────────────────────────────────────────────────────┘
 
-    🏡 OUTDOOR (Birdhouse)              🏠 HOME (Indoor)            ☁️  CLOUD
-    ┌──────────────────┐                ┌──────────────┐          ┌──────────┐
-    │  Camera Pi       │   Cat6 Cable   │   NAS Pi     │  WiFi    │   AWS    │
-    │  (Pi 4 8GB)      │◄──────────────►│  (Pi 4 4GB)  │◄────────►│Rekognition│
-    │                  │   PoE Power    │              │          │          │
-    │  - Camera Module │                │  - 1TB SSD   │          └──────────┘
-    │  - PIR Sensor    │                │  - Storage   │
-    │  - PoE+ HAT      │                │  - Processing│
-    │  - Weatherproof  │                └──────────────┘
-    └──────────────────┘
-         │
-         │ Motion Detected
+    🏡 OUTDOOR (Birdhouse)                   🏠 HOME (Indoor)
+    ┌──────────────────┐                     ┌────────────────┐
+    │  Camera Pi       │       WiFi (15m)    │  Home Router   │
+    │  (Pi Zero 2 W)   │◄────────────────────►│  192.168.1.1   │
+    │                  │                     └────────────────┘
+    │  - NoIR Camera   │
+    │  - PIR Sensor    │
+    │  - IR LEDs       │         🌞 Solar Panel (50W)
+    │  - Relay Module  │         Battery (12V 10Ah)
+    └──────────────────┘         MPPT Controller
+         │                       Buck Converter (12V→5V)
+         │ Solar Cables
          ▼
-    🐦 Bird Activity
-       Captured & Stored
+    🔋 Extended Battery
+       (4-7 days autonomy)
 ```
 
-### Data Flow
+### Data Flow (Motion-Activated)
 
 ```
-1. PIR Sensor → Detects Motion
+1. PIR Sensor → Detects motion (GPIO4 signal)
          ↓
-2. Camera Module → Captures Image (1080p)
+2. Python script → Reads GPIO HIGH
          ↓
-3. Camera Pi → Saves Locally (microSD)
+3. GPIO17 → Triggers relay
          ↓
-4. Network Transfer → Sends to NAS Pi (via PoE Ethernet)
+4. IR LEDs → Turn ON (12V from battery)
          ↓
-5. NAS Pi → Stores on 1TB SSD
+5. Camera Module → Captures image (NoIR, 12MP)
          ↓
-6. AWS Rekognition → Identifies Bird Species
+6. Pi Zero → Saves locally (microSD)
          ↓
-7. Results → Stored & Available for Review
+7. WiFi upload → Sends to NAS or cloud (optional)
+         ↓
+8. After 10s → Relay OFF, LEDs powerdown
 ```
 
-### Hardware Connections - Camera Pi
+### Hardware Connections - Camera Pi (Pi Zero 2 W H)
 
 ```
-                    ┌─────────────────────────────┐
-                    │   Raspberry Pi 4 (8GB)      │
-                    │                             │
-    Camera ─────────┤ CSI Port                    │
-    Module 3        │                             │
-                    │                 GPIO Pins   │──── PIR Motion
-                    │                             │     Sensor (3 pins)
-                    │                             │
-                    │                 Ethernet    │──── Cat6 Cable
-    PoE+ HAT ───────┤ 40-pin Header   Port (PoE)  │     (Data + Power)
-    (sits on top)   │                             │
-                    │                             │
-                    │ microSD Slot                │──── 32GB microSD
-                    └─────────────────────────────┘
-                             (All enclosed in weatherproof enclosure)
+                    ┌──────────────────────────┐
+                    │ Pi Zero 2 W (with header)│
+                    │                          │
+    NoIR Camera ────┤ CSI Port (ribbon cable)  │
+    Module 3        │                          │
+                    │                          │
+                    │ GPIO Header (40-pin)     │
+                    │ ┌──────────────────────┐ │
+    PIR Sensor ─────┤ Pin 1 (3.3V)           │─┤
+    VCC         ┌───┤ Pin 6 (GND)            │ │
+    GND         │   │ Pin 7 (GPIO4) ◄───OUT  │ │
+    OUT         │   │ Pin 11 (GPIO17) ◄─ IN1 │ │
+                │   │ Pin 2 (5V)             │─┤─ Relay VCC
+    Relay       │   │ Pin 9 (GND)            │─┤─ Relay GND
+    Module ─────┘   │ Pin 11 (GPIO17) ─► IN1 │ │
+                    │                        │ │
+                    │ microSD Slot           │─┤─ microSD Card
+                    └──────────────────────────┘
+                    (All in weatherproof case)
+
+Relay Output:
+  NO ──► 12V IR LED Array
+  COM ──► 12V Battery (-)
+  IR LED (-) ──► Battery (-)
 ```
 
-### Hardware Connections - NAS Pi
+### Power System Connections
 
 ```
-                    ┌─────────────────────────────┐
-                    │   Raspberry Pi 4 (4GB)      │
-                    │                             │
-                    │                             │
-    USB-C ──────────┤ USB-C Port    USB 3.0 Ports │──── Samsung T7
-    Power (15W)     │                             │     1TB SSD
-                    │                             │
-                    │                 Ethernet    │──── Home Network
-                    │                 Port        │     (Router)
-                    │                             │
-                    │                             │
-                    │ microSD Slot                │──── 32GB microSD
-                    └─────────────────────────────┘
-                             (Standard case, indoor placement)
+        ☀️ 50W Solar Panel
+             │ (MC4)
+             ↓
+         ┌────────────┐
+         │ MPPT 10A   │◄─── Battery (12V 10Ah)
+         │ Controller │     (charging current)
+         └────────────┘
+             │ (to load)
+             ↓
+         ┌────────────┐
+         │ Buck Conv. │ 12V → 5V 2.5A
+         │ 12V-5V 3A  │
+         └────────────┘
+             │ USB-C
+             ↓
+        Pi Zero 2 W
+        Power Input
 ```
 
-### Network Topology
+### Network Topology (WiFi)
 
 ```
-                        Home Router/Switch
-                        (192.168.1.1)
-                               │
-                ┌──────────────┼──────────────┐
-                │              │              │
-                │              │              │
-        PoE Injector    NAS Pi (WiFi)   MacBook Pro
-        (Ethernet)      192.168.1.100   (WiFi/Setup)
-                │
-                │ Cat6 (50m)
-                │ PoE Power
-                │
-         Camera Pi (PoE)
-         192.168.1.101
-         (birdhouse-camera.local)
+                    🌐 Home Router
+                    192.168.1.1
+                    (2.4 GHz WiFi)
+                         │
+            ┌────────────┼────────────┐
+            │            │            │
+        Camera Pi    NAS Pi (opt)   MacBook
+        (WiFi)      (WiFi/LAN)     (WiFi)
+    192.168.1.101  192.168.1.100
 ```
 
 ## Table of Contents
