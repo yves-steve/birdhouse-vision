@@ -131,16 +131,18 @@ Relay Output:
 Before you begin, ensure you have received:
 
 ### Camera Unit (Birdhouse)
-- ✅ Raspberry Pi 4 Model B 8GB
-- ✅ Camera Module 3
+- ✅ Raspberry Pi Zero 2 W H (with GPIO header)
+- ✅ Camera Module 3 NoIR
 - ✅ Kingston 32GB microSD card
-- ✅ PoE+ HAT
-- ✅ PIR Motion Sensor
+- ✅ PIR Motion Sensor (HC-SR501)
+- ✅ Relay Module (1-channel)
+- ✅ IR LED Spotlight (850nm, 12V)
 
 ### NAS Unit (Home)
-- ✅ Raspberry Pi 4 Model B 4GB
+- ✅ Raspberry Pi 4 Model B (8GB)
 - ✅ Kingston 32GB microSD card
-- ✅ Samsung T7 Shield 1TB SSD
+- ✅ Kingston NV2 1TB SSD
+- ✅ Axagon EEM2-UG2 USB 3.0 to NVMe adapter
 
 ### Tools
 - ✅ MacBook Pro (for flashing OS)
@@ -432,7 +434,7 @@ Coming soon...
 
 ### NAS Pi Setup
 
-This section covers configuring the Samsung T7 SSD, installing Samba for network access, and setting up the data lifecycle management.
+This section covers configuring the Kingston NV2 SSD (via Axagon USB 3.0 adapter), installing Samba for network access, and setting up the data lifecycle management.
 
 #### Data Lifecycle Overview
 
@@ -479,9 +481,9 @@ Before diving into configuration, understand how data flows through the system:
    • PRIORITY:  Disk space check runs FIRST (prevents full disk)
 ```
 
-#### Step 1: Connect and Identify the Samsung T7 SSD
+#### Step 1: Connect and Identify the Kingston NV2 SSD
 
-1. **Connect the SSD** to a USB 3.0 port (blue port) on the NAS Pi
+1. **Connect the Kingston NV2 SSD** via Axagon EEM2-UG2 adapter to a USB 3.0 port (blue port) on the NAS Pi
 
 2. **SSH into the NAS Pi**:
    ```bash
@@ -501,7 +503,7 @@ Before diving into configuration, understand how data flows through the system:
    # ├─mmcblk0p1 179:1    0   512M  0 part /boot/firmware
    # └─mmcblk0p2 179:2    0  29.2G  0 part /
    
-   # Verify it's the Samsung T7 (should show ~1TB)
+   # Verify it's the Kingston NV2 (should show ~1TB)
    sudo fdisk -l /dev/sda
    ```
 
@@ -1061,8 +1063,8 @@ Raspberry Pi OS Bookworm uses **NetworkManager** instead of `wpa_supplicant`. If
 ## Next Steps
 
 Once both Pis are running:
-1. ✅ Camera Pi: Test camera module
-2. ✅ NAS Pi: Connect Samsung T7 SSD
+1. ✅ Camera Pi: Test PIR sensor and camera module
+2. ✅ NAS Pi: Connect Kingston NV2 SSD via Axagon adapter
 3. ✅ Install project code (see [README.md](../README.md))
-4. ✅ Configure networking for PoE
+4. ✅ Configure WiFi networking (camera Pi to home router)
 5. ✅ Deploy to birdhouse enclosure
