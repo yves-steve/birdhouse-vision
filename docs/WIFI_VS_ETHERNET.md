@@ -25,9 +25,9 @@ At 50 meters through trees, WiFi is **not viable**:
 
 | Factor | Loss (dB) | Notes |
 |--------|-----------|-------|
-| Free space loss (2.4 GHz) | −56 dB | 15m unobstructed |
-| Wall penetration (1–2 walls) | −4 to −8 dB | Standard brick/wood |
-| **Total 2.4 GHz** | **−60 to −64 dB** | ✅ Excellent signal |
+| Free space path loss (2.4 GHz, 15 m) | 64 dB | 15 m unobstructed (FSPL ≈ 63.6 dB) |
+| Wall penetration (1–2 walls) | 4 to 8 dB | Standard brick/wood |
+| **Total 2.4 GHz path loss** | **68 to 72 dB** | ✅ Excellent signal margin |
 
 **Expected performance:**
 - Signal strength: −55 to −65 dBm (excellent to good)
