@@ -42,8 +42,17 @@ jobs:
     - name: Install ShellCheck
       if: steps.find-scripts.outputs.found == 'true'
       run: |
-        sudo apt-get update
-        sudo apt-get install -y shellcheck=0.9.0-1
+        SHELLCHECK_VERSION="v0.9.0"
+        SHELLCHECK_SHA256="700324c6dd0ebea0117591c6cc9d7350d9c7c5c287acbad7630fa17b1d4d9e2f"
+        curl -sSL --retry 3 --retry-delay 2 --max-time 60 \
+          "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" \
+          -o /tmp/shellcheck.tar.xz
+        # sha256sum expects "<hash>  <file>" format (two spaces)
+        echo "${SHELLCHECK_SHA256}  /tmp/shellcheck.tar.xz" | sha256sum -c -
+        tar -xJf /tmp/shellcheck.tar.xz -C /tmp
+        sudo mv "/tmp/shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin/shellcheck
+        rm -rf /tmp/shellcheck.tar.xz "/tmp/shellcheck-${SHELLCHECK_VERSION}"
+        shellcheck --version
     
     - name: Run ShellCheck
       if: steps.find-scripts.outputs.found == 'true'
