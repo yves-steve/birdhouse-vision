@@ -25,7 +25,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install Pillow==12.2.0
+        pip install -r requirements.txt
         
     - name: Generate gallery
       run: |
