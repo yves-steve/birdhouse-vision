@@ -123,3 +123,10 @@ Complete hardware list with Finnish suppliers (February 2026).
 ### 🇸🇪 Electro:Kit (Nordic, ships to Finland)
 - Nordic electronics specialist
 - **Recommended for:** Pi Zero, IR LEDs, relays (stock alternatives)
+
+### 🇫🇮 Lintuvaruste.fi (Suomen Lintuvaruste Oy)
+- Finnish bird supplies specialist, operated by BirdLife Finland
+- Birdhouses, feeders, nest boxes, and birding accessories
+- Location: Koetilantie 1 B 30, 00790 Helsinki
+- Contact: lintuvaruste@birdlife.fi / (09) 386 7856
+- **Recommended for:** The actual birdhouse/nest box unit (linnunpönttö) — particularly the [Great Tit / Pied Flycatcher box (kelonharmaa)](https://lintuvaruste.fi/collections/linnunpontot/products/linnunpontto-talitiainen-kirjosieppo-kelonharmaa) (€40) which suits Pi Zero + NoIR camera installation
