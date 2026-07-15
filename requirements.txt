@@ -1,7 +1,7 @@
 # Camera & Image Processing
 picamera2==0.3.36
 Pillow==12.2.0
-opencv-python==4.13.0.92
+opencv-python==5.0.0.93
 
 # AWS Integration
 boto3==1.43.29
