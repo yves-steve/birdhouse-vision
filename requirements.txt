@@ -1,5 +1,5 @@
 # Camera & Image Processing
-picamera2==0.3.36
+picamera2==0.3.37
 Pillow==12.3.0
 opencv-python==5.0.0.93
 
