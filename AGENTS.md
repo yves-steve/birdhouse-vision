@@ -124,6 +124,22 @@ logger.debug(f"Using AWS region: {region}")
 # Credentials should NEVER appear in logs
 ```
 
+### Data Minimization for Persistence
+
+When storing operational or telemetry records, persist only:
+
+- SHA-256 hashes (of identifiers/content where needed)
+- Timestamps
+
+Do not persist:
+
+- Raw product details
+- Full URLs
+- Query strings or tokens
+- Raw error messages
+
+If error tracking is required, store a sanitized error category/code and timestamp instead of full exception text.
+
 ---
 
 ## 2. Project Architecture
